@@ -6,7 +6,12 @@ import com.aerospike.client.policy.ClientPolicy;
 import model.CookieData;
 
 /**
- * Created by yzhao on 7/12/17.
+ * build it:
+ * mvn clean package
+ * scp /Users/yzhao/IdeaProjects/ENG835_Backfill/target/Backfill-jar-with-dependencies.jar
+ * run it:
+ * /usr/java/jdk/bin/java -jar Backfill-jar-with-dependencies.jar
+ *
  */
 public class Main {
     public static void main(String[] args){
