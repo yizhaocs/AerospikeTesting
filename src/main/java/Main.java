@@ -21,8 +21,8 @@ public class Main {
         try{
             policy = new ClientPolicy();
             client = new AerospikeClient(policy, "172.28.128.3", 3000);
-            getPutOperations(client);
-            getPutOperationsAdara(client);
+            getPutOperations_test(client);
+            getPutOperations_adara(client);
         }finally {
             if(client != null){
                 client.close();
@@ -31,7 +31,7 @@ public class Main {
     }
 
 
-    public static void getPutOperations(AerospikeClient client){
+    public static void getPutOperations_test(AerospikeClient client){
         Key key = new Key("test", "CookieData", "putgetkey");
         // Key key = new Key("adara", "CookieData", "putgetkey");
         Bin bin1 = new Bin("bin1", "value1");
@@ -42,7 +42,7 @@ public class Main {
         System.out.println(record.toString());
     }
 
-    public static void getPutOperationsAdara(AerospikeClient client){
+    public static void getPutOperations_adara(AerospikeClient client){
         Key key = new Key("adara", "CookieData", "putgetkey");
         CookieData mCookieData = new CookieData();
         Bin bin1 = new Bin("bin1", mCookieData);
