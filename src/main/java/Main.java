@@ -22,7 +22,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args){
         //String cookieId = args[0];
-        connection("1234");
+        connection("107391385230");
     }
 
 
@@ -34,7 +34,7 @@ public class Main {
             policy = new ClientPolicy();
             client = new AerospikeClient(policy, "172.28.128.3", 3000);
             getPutOperations_test(client);
-            getPutOperations_adara(client);
+            //getPutOperations_adara(client);
             getPutOperations_adara_prod(client,cookieId);
         }finally {
             if(client != null){
