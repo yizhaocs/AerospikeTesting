@@ -30,7 +30,8 @@ public class Main {
 
 
     public static void getPutOperations(AerospikeClient client){
-        Key key = new Key("test", "test_set", "putgetkey");
+        Key key = new Key("test", "CookieData", "putgetkey");
+        // Key key = new Key("adara", "CookieData", "putgetkey");
         Bin bin1 = new Bin("bin1", "value1");
         Bin bin2 = new Bin("bin2", "value2");
 
