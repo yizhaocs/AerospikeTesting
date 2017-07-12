@@ -7,6 +7,7 @@
     <groupId>opt.opinmind</groupId>
     <artifactId>aerospiketesting</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>Aerospike Testing</name>
 
 
     <dependencies>
@@ -21,6 +22,11 @@
             <groupId>net.sf.trove4j</groupId>
             <artifactId>trove4j</artifactId>
             <version>3.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>opinmind</groupId>
+            <artifactId>serversidecookie</artifactId>
         </dependency>
     </dependencies>
 
