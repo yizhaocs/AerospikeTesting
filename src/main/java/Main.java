@@ -92,7 +92,8 @@ public class Main {
 
             client.put(null, key, bin1, bin2);
             Record record = client.get(null, key);
-            System.out.println(record.toString());
+            CookieData ck = (CookieData)record.bins.get("bin1");
+            System.out.println("record from aerospike: " + record.toString());
         }else{
             System.out.println("CookieData is null");
         }
