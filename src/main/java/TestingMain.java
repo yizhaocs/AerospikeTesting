@@ -1,10 +1,17 @@
 package main.java;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
+import com.aerospike.client.Host;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
+import com.aerospike.client.async.EventLoop;
+import com.aerospike.client.async.EventLoops;
+import com.aerospike.client.async.NioEventLoops;
+import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.ClientPolicy;
+import com.aerospike.client.policy.WritePolicy;
 import com.opinmind.bidgen.CookieRouter;
 import com.opinmind.common.OpinmindConstants;
 import com.opinmind.ssc.CookieData;
@@ -53,14 +60,20 @@ public class TestingMain {
     public static void connection(String cookieId){
         ClientPolicy policy = null;
         AerospikeClient client = null;
+        WritePolicy wp = null;
+        //WritePolicy writePolicy = new WritePolicy();
 
         try{
             policy = new ClientPolicy();
-            client = new AerospikeClient(policy, "172.28.128.3", 3000);
+            policy.timeout = 50000;
+
+            // Host[] multipleHost = new Host[]{new Host("172.28.128.3", 3000), new Host("172.28.128.4", 3000)};
+            Host[] multipleHost = new Host[]{new Host("172.28.128.10", 3000),new Host("172.28.128.11", 3000)};
+            client = new AerospikeClient(policy, multipleHost);
             //getPutOperations_test(client);
             //getPutOperations_adara(client);
             //getPutOperations_adara_prod(client,cookieId);
-            readThenWrite(policy, client, "/Users/yzhao/Desktop/20170712-004428.ps101-lax1.0000000000010309020.csv");
+            readThenWrite(policy, client, WritePolicyHelp.wp, "/Users/yzhao/Desktop/20170712-004428.ps101-lax1.0000000000010309020.csv");
         }finally {
             if(client != null){
                 client.close();
@@ -70,7 +83,7 @@ public class TestingMain {
 
 
     public static void getPutOperations_test(AerospikeClient client){
-        Key key = new Key("database1", "table1", "mykey1");
+        Key key = new Key("test", "table1", "mykey1");
         // Key key = new Key("adara", "CookieData", "putgetkey");
         Bin bin1 = new Bin("column1", "value1");
         Bin bin2 = new Bin("column2", "value2");
@@ -158,7 +171,7 @@ public class TestingMain {
         return userDataCache;
     }
 
-    public static void readThenWrite(ClientPolicy policy, AerospikeClient client, String fileInput){
+    public static void readThenWrite(ClientPolicy policy, AerospikeClient client, WritePolicy wp, String fileInput){
         // Location of file to read
         File file = new File(fileInput);
         Scanner scanner = null;
@@ -170,7 +183,7 @@ public class TestingMain {
                 pipeTokenizer.setDelimiterChar('|');
                 String[] data = pipeTokenizer.reset(line).getTokenArray();
                 if(data!=null && data.length > 1 && data[0].equals("ckvraw")) {
-                    processData(policy, client, data, null, 0, true);
+                    processData(policy, client, wp, data, null, 0, true);
                 }
             }
 
@@ -190,7 +203,7 @@ public class TestingMain {
 
 
 
-    public static void processData(ClientPolicy policy, AerospikeClient client, String[] data, String fileName, int lineNo, Boolean shouldWriteClog) throws Exception {
+    public static void processData(ClientPolicy policy, AerospikeClient client, WritePolicy wp, String[] data, String fileName, int lineNo, Boolean shouldWriteClog) throws Exception {
         // construct the kvt from file
         // note, according to the contract with the file producer;, the strings are url encoded
 
@@ -257,10 +270,33 @@ public class TestingMain {
                         null,
                         shouldWriteClog);
 
-                Key key = new Key("database2", "table2", "key1");
+                Key key = new Key("test", "table6", cookieId);
                 Bin column1 = new Bin("cookieId", cookieId);
                 Bin column2 = new Bin("ckvMap", ckvMap);
-                client.put(null, key, column1,column2);
+                //Record r = client.get(null,key);
+                //if(r!= null && !r.bins.containsKey(cookieId)) {
+                if(!client.exists(null, key)) {
+                    System.out.println(cookieId);
+                    try {
+                        EventLoops eventLoops =  new NioEventLoops(1);
+                        EventLoop eventLoop = eventLoops.get(0);
+                        WriteListener listener = new WriteListener() {
+                            @Override
+                            public void onSuccess(Key key) {
+
+                            }
+
+                            @Override
+                            public void onFailure(AerospikeException e) {
+
+                            }
+                        };
+                        client.put(eventLoop, listener, wp, key, column1, column2);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                //}
             }
         }
     }
