@@ -1,4 +1,4 @@
-package main.java;
+package main.java.aerospike;
 
 import com.aerospike.client.policy.WritePolicy;
 

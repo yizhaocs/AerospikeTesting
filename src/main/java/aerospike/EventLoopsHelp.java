@@ -1,4 +1,4 @@
-package main.java;
+package main.java.aerospike;
 
 import com.aerospike.client.async.EventLoops;
 import com.aerospike.client.async.NioEventLoops;
