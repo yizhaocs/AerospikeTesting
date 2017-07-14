@@ -25,7 +25,7 @@ public class ProcessCkvData {
     private static final Pattern amperSpliter = Pattern.compile("&");
     private static final Pattern equalSpliter = Pattern.compile("=");
 
-    public static void readThenWrite(Map<String, Map<Integer,KeyValueTs>> map, ClientPolicy policy, AerospikeClient client, WritePolicy wp, String fileInput){
+    public static void readThenWrite(Map<String, Map<Integer,KeyValueTs>> map, String fileInput){
         // Location of file to read
         File file = new File(fileInput);
         Scanner scanner = null;
@@ -37,7 +37,7 @@ public class ProcessCkvData {
                 pipeTokenizer.setDelimiterChar('|');
                 String[] data = pipeTokenizer.reset(line).getTokenArray();
                 if(data!=null && data.length > 1 && data[0].equals("ckvraw")) {
-                    processData(map, policy, client, wp, data, null, 0, true);
+                    processData(map, data, null, 0, true);
                 }
             }
 
@@ -55,7 +55,7 @@ public class ProcessCkvData {
         }
     }
 
-    public static void processData(Map<String, Map<Integer,KeyValueTs>> map , ClientPolicy policy, AerospikeClient client, WritePolicy wp, String[] data, String fileName, int lineNo, Boolean shouldWriteClog) throws Exception {
+    public static void processData(Map<String, Map<Integer,KeyValueTs>> map , String[] data, String fileName, int lineNo, Boolean shouldWriteClog) throws Exception {
         // construct the kvt from file
         // note, according to the contract with the file producer;, the strings are url encoded
 
