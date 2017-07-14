@@ -15,6 +15,10 @@ public class WritePolicyHelp {
     static {
         wp.maxRetries = 3;
         wp.sleepBetweenRetries = 500;
-        wp.setTimeout(10000);
+        /**
+         * Timeout trumps retries.
+         * If you set a time out of 50ms (rather than zero) and the operation has not completed in that time, you will get an exception regardless of the number of retries.
+         */
+        wp.setTimeout(0);
     }
 }

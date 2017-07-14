@@ -49,6 +49,7 @@ import java.util.regex.Pattern;
 public class TestingMain {
     private static final Pattern amperSpliter = Pattern.compile("&");
     private static final Pattern equalSpliter = Pattern.compile("=");
+    static Map<String, Map<Integer,KeyValueTs>> map = new HashMap<String, Map<Integer, KeyValueTs>>();
 
 
     public static void main(String[] args){
@@ -68,7 +69,7 @@ public class TestingMain {
             policy.timeout = 50000;
 
             // Host[] multipleHost = new Host[]{new Host("172.28.128.3", 3000), new Host("172.28.128.4", 3000)};
-            Host[] multipleHost = new Host[]{new Host("172.28.128.10", 3000),new Host("172.28.128.11", 3000)};
+            Host[] multipleHost = new Host[]{new Host("172.28.128.10", 3000)}; // ,new Host("172.28.128.11", 3000)
             client = new AerospikeClient(policy, multipleHost);
             //getPutOperations_test(client);
             //getPutOperations_adara(client);
@@ -187,6 +188,8 @@ public class TestingMain {
                 }
             }
 
+            writeToAerospike(policy, client, wp);
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
 
@@ -200,6 +203,45 @@ public class TestingMain {
     }
 
 
+    public static void writeToAerospike(ClientPolicy policy, AerospikeClient client, WritePolicy wp){
+
+        long startTime = System.nanoTime();
+
+        int count = 0;
+        for(String cookieId: map.keySet()){
+            Key key = new Key("test", "table13", cookieId);
+            Bin column1 = new Bin("cookieId", cookieId);
+            Bin column2 = new Bin("ckvMap", map.get(cookieId));
+            //Record r = client.get(null,key);
+            //if(r!= null && !r.bins.containsKey(cookieId)) {
+            if(!client.exists(null, key)) {
+                // System.out.println(cookieId);
+                try {
+/*                        EventLoop eventLoop = EventLoopsHelp.eventLoops.get(0);
+                        WriteListener listener = new WriteListener() {
+                            @Override
+                            public void onSuccess(Key key) {
+
+                            }
+
+                            @Override
+                            public void onFailure(AerospikeException e) {
+
+                            }
+                        };*/
+                    // client.put(eventLoop, listener, wp, key, column2);
+                    client.put(wp, key, column1, column2);
+                    count ++;
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime)/1000000; // in milliseconds
+        System.out.println("duration:" + duration + " milliseconds ,with count:" + count);
+    }
 
 
 
@@ -270,7 +312,10 @@ public class TestingMain {
                         null,
                         shouldWriteClog);
 
-                Key key = new Key("test", "table6", cookieId);
+                map.put(String.valueOf(cookieId), ckvMap);
+
+/*
+                Key key = new Key("test", "table10", cookieId);
                 Bin column1 = new Bin("cookieId", cookieId);
                 Bin column2 = new Bin("ckvMap", ckvMap);
                 //Record r = client.get(null,key);
@@ -278,8 +323,7 @@ public class TestingMain {
                 if(!client.exists(null, key)) {
                     System.out.println(cookieId);
                     try {
-                        EventLoops eventLoops =  new NioEventLoops(1);
-                        EventLoop eventLoop = eventLoops.get(0);
+*//*                        EventLoop eventLoop = EventLoopsHelp.eventLoops.get(0);
                         WriteListener listener = new WriteListener() {
                             @Override
                             public void onSuccess(Key key) {
@@ -290,12 +334,13 @@ public class TestingMain {
                             public void onFailure(AerospikeException e) {
 
                             }
-                        };
-                        client.put(eventLoop, listener, wp, key, column1, column2);
+                        };*//*
+                        // client.put(eventLoop, listener, wp, key, column2);
+                        client.put(wp, key, column1, column2);
                     }catch(Exception e){
                         e.printStackTrace();
                     }
-                }
+                }*/
                 //}
             }
         }
