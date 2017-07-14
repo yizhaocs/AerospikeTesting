@@ -209,7 +209,7 @@ public class TestingMain {
 
         int count = 0;
         for(String cookieId: map.keySet()){
-            Key key = new Key("test", "table13", cookieId);
+            Key key = new Key("test", "table14", cookieId);
             Bin column1 = new Bin("cookieId", cookieId);
             Bin column2 = new Bin("ckvMap", map.get(cookieId));
             //Record r = client.get(null,key);
@@ -240,7 +240,7 @@ public class TestingMain {
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime)/1000000; // in milliseconds
-        System.out.println("duration:" + duration + " milliseconds ,with count:" + count);
+        System.out.println("duration:" + duration + " milliseconds ,with count:" + count); // duration:2824 milliseconds ,with count:2154
     }
 
 
