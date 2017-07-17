@@ -1,4 +1,4 @@
-package main.java.aerospike;
+package com.adara.newcache.aerospikecode;
 
 import com.aerospike.client.async.EventLoops;
 import com.aerospike.client.async.NioEventLoops;

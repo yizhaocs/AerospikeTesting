@@ -1,18 +1,8 @@
-package main.java;
+package com.adara.newcache;
 
-import com.aerospike.client.AerospikeClient;
-import com.aerospike.client.Bin;
-import com.aerospike.client.Host;
-import com.aerospike.client.Key;
-import com.aerospike.client.Record;
-import com.aerospike.client.policy.ClientPolicy;
-import com.aerospike.client.policy.WritePolicy;
-import com.opinmind.ssc.CookieData;
+import com.adara.newcache.aerospikecode.AerospikeConnection;
 import com.opinmind.ssc.KeyValueTs;
-import main.java.aerospike.AerospikeConnection;
-import main.java.aerospike.WritePolicyHelp;
-import main.java.udcuv2.ProcessCkvData;
-import main.java.udcuv2.ReadBidgen;
+import com.adara.newcache.udcuv2code.ProcessCkvData;
 
 import java.util.HashMap;
 import java.util.Map;

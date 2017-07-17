@@ -1,4 +1,4 @@
-package main.java.aerospike;
+package com.adara.newcache.aerospikecode;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
@@ -9,8 +9,7 @@ import com.aerospike.client.policy.ClientPolicy;
 import com.aerospike.client.policy.WritePolicy;
 import com.opinmind.ssc.CookieData;
 import com.opinmind.ssc.KeyValueTs;
-import main.java.udcuv2.ProcessCkvData;
-import main.java.udcuv2.ReadBidgen;
+import com.adara.newcache.udcuv2code.ReadBidgen;
 
 import java.util.Map;
 

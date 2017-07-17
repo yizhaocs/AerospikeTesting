@@ -1,4 +1,4 @@
-package main.java.udcuv2;
+package com.adara.newcache.udcuv2code;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.policy.ClientPolicy;
