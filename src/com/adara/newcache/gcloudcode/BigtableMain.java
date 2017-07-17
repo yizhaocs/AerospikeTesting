@@ -8,7 +8,7 @@ import org.apache.hadoop.hbase.client.Connection;
 public class BigtableMain {
     public static void main(String[] args){
         Connection connection = BigtableHelper.getConnection();
-        System.out.println(BigtableHelloWorld.create(connection));
-        BigtableHelloWorld.doHelloWorld();
+        //System.out.println(BigtableHelloWorld.create(connection));
+        System.out.println(CreateTable.create(connection, "test1", ));
     }
 }
