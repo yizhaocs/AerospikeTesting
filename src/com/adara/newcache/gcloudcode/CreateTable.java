@@ -13,7 +13,7 @@ import java.io.IOException;
  * Created by yzhao on 7/17/17.
  */
 public class CreateTable {
-    public static String create(Connection connection, String tableName, String columnFamilyName) {
+    public static String execute(Connection connection, byte[] tableName, byte[] columnFamilyName) {
         try {
             // The admin API lets us create, manage and delete tables
             Admin admin = connection.getAdmin();

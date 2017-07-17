@@ -14,7 +14,7 @@ import java.util.Collections;
  * gcloud init
  * gcloud auth application-default login
  */
-public class BigtableHelper {
+public class BigTableConnection {
     private static final String PROJECT_ID = "adara-bigtable1";
     private static final String INSTANCE_ID = "adara-bigtable1";
 
