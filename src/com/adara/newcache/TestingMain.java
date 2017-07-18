@@ -4,13 +4,20 @@ import com.adara.newcache.aerospikecode.AerospikeConnection;
 import com.adara.newcache.gcloudcode.BigTableConnection;
 import com.adara.newcache.gcloudcode.CreateTable;
 import com.adara.newcache.gcloudcode.InsertTable;
+import com.adara.newcache.gcloudcode.ReadTable;
 import com.opinmind.ssc.KeyValueTs;
 import com.adara.newcache.udcuv2code.ProcessCkvData;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +32,7 @@ import java.util.Map;
 public class TestingMain {
 
     static Map<String, Map<Integer,KeyValueTs>> map = new HashMap<String, Map<Integer, KeyValueTs>>();
-
+    static byte[] columnFaimilyName = "columnFaimilyName".getBytes();
 
     public static void main(String[] args){
         //String cookieId = args[0];
@@ -41,8 +48,8 @@ public class TestingMain {
 
     public static void writeToBigTable( ){
         try {
-            byte[] tableName = Bytes.toBytes("table1");
-            byte[] columnFaimilyName = Bytes.toBytes("ckvMap");
+            byte[] tableName = Bytes.toBytes("table5");
+
             Connection connection = BigTableConnection.getConnection();
             //System.out.println(BigtableHelloWorld.create(connection));
             System.out.println(CreateTable.execute(connection, tableName, columnFaimilyName));
@@ -53,8 +60,6 @@ public class TestingMain {
         }
     }
     public static void writeToBigTable2(Table table ) throws Exception{
-        byte[] tableName = Bytes.toBytes("table1");
-        byte[] columnFaimilyName = Bytes.toBytes("ckvMap");
 
 
         long startTime = System.nanoTime();
@@ -62,6 +67,24 @@ public class TestingMain {
         int count = 0;
         for(String cookieId: map.keySet()){
             Map<Integer, KeyValueTs > ckvMap = map.get(cookieId);
+            JSONArray jsonArray = new JSONArray();
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(byteOut);
+            out.writeObject(ckvMap);
+            byte[] rowKey = "rowKey".getBytes();
+
+            byte[] columnQualifier = Bytes.toBytes(cookieId);
+            InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifier,byteOut.toByteArray());
+
+            System.out.println("cookie:" + cookieId);
+            byte[] result = ReadTable.execute(table, columnFaimilyName, columnQualifier);
+            // Parse byte array to Map
+            ByteArrayInputStream byteIn = new ByteArrayInputStream(result);
+            ObjectInputStream in = new ObjectInputStream(byteIn);
+            Map<Integer, String> data2 = (Map<Integer, String>) in.readObject();
+            System.out.println("cookie:" + cookieId + " ,ckvMap:" + data2.toString());
+
+/*
             for(int key : ckvMap.keySet()){
                 KeyValueTs mKeyValueTs = ckvMap.get(key);
                 byte[] rowKey = Bytes.toBytes(cookieId);
@@ -69,12 +92,23 @@ public class TestingMain {
                 byte[] columnQualifierkeyId = Bytes.toBytes("keyId");
                 byte[] columnQualifierValue = Bytes.toBytes("value");
                 byte[] columnQualifierLastPixelTs = Bytes.toBytes("lastPixelTs");
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("keyId", mKeyValueTs.getKeyId());
+                jsonObj.put("value", mKeyValueTs.getValue());
+                jsonObj.put("lastPixelTs", mKeyValueTs.getLastPixelTs());
+                jsonArray.put(key,jsonObj);
+                InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifierkeyId, String.valueOf(mKeyValueTs.getKeyId()).getBytes());
+                InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifierValue, mKeyValueTs.getValue().getBytes());
+                InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifierLastPixelTs, Bytes.toBytes(String.valueOf(mKeyValueTs.getLastPixelTs().getTime())));
 
-                InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifierkeyId, Bytes.toBytes(mKeyValueTs.getKeyId()));
-                InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifierValue, Bytes.toBytes(mKeyValueTs.getValue()));
-                InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifierLastPixelTs, Bytes.toBytes(mKeyValueTs.getLastPixelTs().getTime()));
+                System.out.println("cookie:" + cookieId);
+                System.out.println("keyId:" + Bytes.toString(ReadTable.execute(table, columnFaimilyName, columnQualifierkeyId)));
+                System.out.println("value:" + Bytes.toString(ReadTable.execute(table, columnFaimilyName, columnQualifierValue)));
+                System.out.println("lastPixelTs:" + Bytes.toString(ReadTable.execute(table, columnFaimilyName, columnQualifierLastPixelTs)));
+                System.out.println();
 
             }
+*/
 
             count ++;
             System.out.println("count:" + count);

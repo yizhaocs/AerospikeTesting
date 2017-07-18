@@ -28,6 +28,10 @@ public class BigtableHelloWorld {
     private static final String[] GREETINGS =
             { "Hello World!", "Hello Cloud Bigtable!", "Hello HBase!" };
 
+    public static void main(String[] args){
+        System.out.println(doHelloWorld());
+    }
+
 
     public static String create(Connection connection) {
         try {
