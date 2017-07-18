@@ -104,6 +104,12 @@
             <artifactId>guava</artifactId>
             <version>20.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.api</groupId>
+            <artifactId>api-common</artifactId>
+            <version>0.2.0</version>
+        </dependency>
     </dependencies>
 
 

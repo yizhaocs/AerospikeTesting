@@ -16,17 +16,17 @@ import com.google.cloud.spanner.Statement;
 public class QuickstartSample {
     public static void main(String... args) throws Exception {
 
-        if (args.length != 2) {
+  /*      if (args.length != 2) {
             System.err.println("Usage: QuickStartSample <instance_id> <database_id>");
             return;
-        }
+        }*/
         // Instantiates a client
         SpannerOptions options = SpannerOptions.newBuilder().build();
         Spanner spanner = options.getService();
 
         // Name of your instance & database.
-        String instanceId = args[0];
-        String databaseId = args[1];
+        String instanceId = "test-instance";
+        String databaseId = "adara";
         try {
             // Creates a database client
             DatabaseClient dbClient = spanner.getDatabaseClient(DatabaseId.of(
