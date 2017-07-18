@@ -1,4 +1,4 @@
-package com.adara.newcache.gcloudcode;
+package com.adara.newcache.gcloudcode.bigtable;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.cloud.bigtable.hbase.BigtableConfiguration;

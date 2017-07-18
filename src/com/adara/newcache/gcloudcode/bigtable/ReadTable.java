@@ -1,4 +1,4 @@
-package com.adara.newcache.gcloudcode;
+package com.adara.newcache.gcloudcode.bigtable;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;

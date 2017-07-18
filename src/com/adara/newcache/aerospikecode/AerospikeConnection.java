@@ -124,6 +124,6 @@ public class AerospikeConnection {
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime)/1000000; // in milliseconds
-        System.out.println("duration:" + duration + " milliseconds ,with count:" + count); // duration:2824 milliseconds ,with count:2154
+        System.out.println("total time used:" + duration + " milliseconds ,with count:" + count);
     }
 }

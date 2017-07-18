@@ -1,4 +1,4 @@
-package com.adara.newcache.gcloudcode;
+package com.adara.newcache.gcloudcode.bigtable;
 
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;

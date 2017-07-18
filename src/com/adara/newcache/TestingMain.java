@@ -1,10 +1,9 @@
 package com.adara.newcache;
 
 import com.adara.newcache.aerospikecode.AerospikeConnection;
-import com.adara.newcache.gcloudcode.BigTableConnection;
-import com.adara.newcache.gcloudcode.CreateTable;
-import com.adara.newcache.gcloudcode.InsertTable;
-import com.adara.newcache.gcloudcode.ReadTable;
+import com.adara.newcache.gcloudcode.bigtable.BigTableConnection;
+import com.adara.newcache.gcloudcode.bigtable.CreateTable;
+import com.adara.newcache.gcloudcode.bigtable.InsertTable;
 import com.opinmind.ssc.KeyValueTs;
 import com.adara.newcache.udcuv2code.ProcessCkvData;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -13,10 +12,7 @@ import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +24,11 @@ import java.util.Map;
  * run it:
  * /usr/java/jdk/bin/java -jar Backfill-jar-with-dependencies.jar
  *
+ */
+
+/**
+ * aerospike: // total time used:2824 milliseconds ,with count:2154, 1.31104921 ms per request
+ * big table: // total time used:114714 milliseconds ,with count:2154, 53.2562674 ms per request
  */
 public class TestingMain {
 
@@ -42,13 +43,13 @@ public class TestingMain {
     }
 
     public static void writeToAerospkie(){
-        AerospikeConnection.connection(map, "106879103115");
+        AerospikeConnection.connection(map, "106879103115"); // duration:2824 milliseconds ,with count:2154, 1.31104921 ms per request
     }
 
 
     public static void writeToBigTable( ){
         try {
-            byte[] tableName = Bytes.toBytes("table5");
+            byte[] tableName = Bytes.toBytes("table8");
 
             Connection connection = BigTableConnection.getConnection();
             //System.out.println(BigtableHelloWorld.create(connection));
@@ -75,6 +76,7 @@ public class TestingMain {
 
             byte[] columnQualifier = Bytes.toBytes(cookieId);
             InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifier,byteOut.toByteArray());
+/*
 
             System.out.println("cookie:" + cookieId);
             byte[] result = ReadTable.execute(table, columnFaimilyName, columnQualifier);
@@ -83,40 +85,15 @@ public class TestingMain {
             ObjectInputStream in = new ObjectInputStream(byteIn);
             Map<Integer, String> data2 = (Map<Integer, String>) in.readObject();
             System.out.println("cookie:" + cookieId + " ,ckvMap:" + data2.toString());
-
-/*
-            for(int key : ckvMap.keySet()){
-                KeyValueTs mKeyValueTs = ckvMap.get(key);
-                byte[] rowKey = Bytes.toBytes(cookieId);
-                //byte[] columnFamily =  Bytes.toBytes("ckvMap");
-                byte[] columnQualifierkeyId = Bytes.toBytes("keyId");
-                byte[] columnQualifierValue = Bytes.toBytes("value");
-                byte[] columnQualifierLastPixelTs = Bytes.toBytes("lastPixelTs");
-                JSONObject jsonObj = new JSONObject();
-                jsonObj.put("keyId", mKeyValueTs.getKeyId());
-                jsonObj.put("value", mKeyValueTs.getValue());
-                jsonObj.put("lastPixelTs", mKeyValueTs.getLastPixelTs());
-                jsonArray.put(key,jsonObj);
-                InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifierkeyId, String.valueOf(mKeyValueTs.getKeyId()).getBytes());
-                InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifierValue, mKeyValueTs.getValue().getBytes());
-                InsertTable.execute(table, rowKey, columnFaimilyName, columnQualifierLastPixelTs, Bytes.toBytes(String.valueOf(mKeyValueTs.getLastPixelTs().getTime())));
-
-                System.out.println("cookie:" + cookieId);
-                System.out.println("keyId:" + Bytes.toString(ReadTable.execute(table, columnFaimilyName, columnQualifierkeyId)));
-                System.out.println("value:" + Bytes.toString(ReadTable.execute(table, columnFaimilyName, columnQualifierValue)));
-                System.out.println("lastPixelTs:" + Bytes.toString(ReadTable.execute(table, columnFaimilyName, columnQualifierLastPixelTs)));
-                System.out.println();
-
-            }
 */
 
             count ++;
-            System.out.println("count:" + count);
+           // System.out.println("count:" + count);
 
         }
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime)/1000000; // in milliseconds
-        System.out.println("duration:" + duration + " milliseconds ,with count:" + count); // duration:2824 milliseconds ,with count:2154
+        System.out.println("total time used:" + duration + " milliseconds ,with count:" + count);
     }
 }
