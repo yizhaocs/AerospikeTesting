@@ -105,18 +105,20 @@ public class TestingMain {
     public static void readBigTable() throws Exception{
         Connection connection = BigTableConnection.getConnection();
         byte[] tableName = Bytes.toBytes(bigtableTableName);
+        byte[] rowKey = "rowKey".getBytes();
         Table table = connection.getTable(TableName.valueOf(tableName));
         int count = 0;
         long startTime = System.nanoTime();
         for(String cookieId: map.keySet()) {
             byte[] columnQualifier = Bytes.toBytes(cookieId);
-             ReadTable.execute(table, columnFaimilyName, columnQualifier);
+             ReadTable.executeScanningAllTableRows(table, rowKey, columnFaimilyName, columnQualifier);
             // Parse byte array to Map
            // ByteArrayInputStream byteIn = new ByteArrayInputStream(result);
             //ObjectInputStream in = new ObjectInputStream(byteIn);
             //Map<Integer, String> data2 = (Map<Integer, String>) in.readObject();
             //System.out.println("cookie:" + cookieId + " ,ckvMap:" + data2.toString());
             count ++;
+            //System.out.println(count);
         }
         long endTime = System.nanoTime();
 
