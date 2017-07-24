@@ -14,10 +14,11 @@ public class ReadTable {
         Scan scan = new Scan();
         StringBuilder result = new StringBuilder();
         ResultScanner scanner = table.getScanner(scan);
+        /*
         byte[] valueBytes = null;
         for (Result row : scanner) {
             valueBytes = row.getValue(COLUMN_FAMILY_NAME, COLUMN_NAME);
-        }
-        return valueBytes;
+        }*/
+        return null;
     }
 }

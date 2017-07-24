@@ -58,6 +58,12 @@
 
         <!--for big table-->
         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.cloud.bigtable</groupId>
             <artifactId>bigtable-hbase-1.2</artifactId>
             <version>${bigtable.version}</version>
@@ -78,31 +84,12 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-tcnative-boringssl-static</artifactId>
-            <version>2.0.5.Final</version>
+            <version>1.1.33.Fork19</version>
         </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.6</version>
-        </dependency>
-
-        <!--for spanner-->
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-spanner</artifactId>
-            <version>0.20.1-beta</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>22.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.api</groupId>
-            <artifactId>api-common</artifactId>
-            <version>0.2.0</version>
         </dependency>
     </dependencies>
 
