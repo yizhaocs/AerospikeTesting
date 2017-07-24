@@ -111,7 +111,7 @@ public class TestingMain {
         long startTime = System.nanoTime();
         for(String cookieId: map.keySet()) {
             byte[] columnQualifier = Bytes.toBytes(cookieId);
-             ReadTable.executeScanningAllTableRows(table, rowKey, columnFaimilyName, columnQualifier);
+             ReadTable.executeReadingArowByItsKey(table, rowKey, columnFaimilyName, columnQualifier);
             // Parse byte array to Map
            // ByteArrayInputStream byteIn = new ByteArrayInputStream(result);
             //ObjectInputStream in = new ObjectInputStream(byteIn);

@@ -55,4 +55,11 @@ public class ReadTable {
         Map<Integer, String> data2 = (Map<Integer, String>) in.readObject();
         System.out.println("ckvMap:" + data2.toString());*/
     }
+
+    private static void print(byte[] valueBytes) throws Exception{
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(valueBytes);
+        ObjectInputStream in = new ObjectInputStream(byteIn);
+        Map<Integer, String> data2 = (Map<Integer, String>) in.readObject();
+        System.out.println("ckvMap:" + data2.toString());
+    }
 }
