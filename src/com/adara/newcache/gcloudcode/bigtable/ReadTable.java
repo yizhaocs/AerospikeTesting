@@ -21,7 +21,8 @@ public class ReadTable {
         //ResultScanner scanner = table.getScanner(scan);
         long startTime = System.nanoTime();
         Result getResult = table.get(new Get(rowkey));
-        getResult.getValue(COLUMN_FAMILY_NAME, COLUMN_NAME);
+        byte[] valueBytes = getResult.getValue(COLUMN_FAMILY_NAME, COLUMN_NAME);
+        print(valueBytes);
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime)/1000000; // in milliseconds
@@ -60,6 +61,6 @@ public class ReadTable {
         ByteArrayInputStream byteIn = new ByteArrayInputStream(valueBytes);
         ObjectInputStream in = new ObjectInputStream(byteIn);
         Map<Integer, String> data2 = (Map<Integer, String>) in.readObject();
-        System.out.println("ckvMap:" + data2.toString());
+        System.out.println("valueBytes:" + data2.toString());
     }
 }
