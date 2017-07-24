@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by yzhao on 7/17/17.
  */
 public class ReadTable {
-    public static byte[] executeReadingArowByItsKey(Table table, byte[] rowkey, byte[] COLUMN_FAMILY_NAME, byte[] COLUMN_NAME) throws Exception{
+    public static void executeReadingArowByItsKey(Table table, byte[] rowkey, byte[] COLUMN_FAMILY_NAME, byte[] COLUMN_NAME) throws Exception{
         //Scan scan = new Scan();
         // StringBuilder result = new StringBuilder();
         //ResultScanner scanner = table.getScanner(scan);
@@ -37,15 +37,14 @@ public class ReadTable {
         for (Result row : scanner) {
             valueBytes = row.getValue(COLUMN_FAMILY_NAME, COLUMN_NAME);
         }*/
-        return null;
     }
 
 
-    public static byte[] executeScanningAllTableRows(Table table, byte[] rowkey, byte[] COLUMN_FAMILY_NAME, byte[] COLUMN_NAME) throws Exception{
+    public static void executeScanningAllTableRows(Table table, byte[] rowkey, byte[] COLUMN_FAMILY_NAME, byte[] COLUMN_NAME) throws Exception{
         Scan scan = new Scan();
         ResultScanner scanner = table.getScanner(scan);
 
-
+/*
        byte[] valueBytes = null;
         for (Result row : scanner) {
             valueBytes = row.getValue(COLUMN_FAMILY_NAME, COLUMN_NAME);
@@ -54,7 +53,6 @@ public class ReadTable {
         ByteArrayInputStream byteIn = new ByteArrayInputStream(valueBytes);
         ObjectInputStream in = new ObjectInputStream(byteIn);
         Map<Integer, String> data2 = (Map<Integer, String>) in.readObject();
-        System.out.println("ckvMap:" + data2.toString());
-        return valueBytes;
+        System.out.println("ckvMap:" + data2.toString());*/
     }
 }
