@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Created by yzhao on 7/14/17.
  */
-public class AerospikeConnection {
+public class OldCode {
     public static void connection(Map<String, Map<Integer,KeyValueTs>> map, String cookieId){
         ClientPolicy policy = null;
         AerospikeClient client = null;
@@ -25,10 +25,9 @@ public class AerospikeConnection {
 
         try{
             policy = new ClientPolicy();
-            policy.timeout = 50000;
 
             // Host[] multipleHost = new Host[]{new Host("172.28.128.3", 3000), new Host("172.28.128.4", 3000)};
-            Host[] multipleHost = new Host[]{new Host("172.28.128.10", 3000)}; // ,new Host("172.28.128.11", 3000)
+            Host[] multipleHost = new Host[]{new Host("localhost", 3000)}; // ,new Host("172.28.128.11", 3000)
             client = new AerospikeClient(policy, multipleHost);
             //getPutOperations_test(client);
             //getPutOperations_adara(client);
@@ -44,7 +43,7 @@ public class AerospikeConnection {
 
 
     public static void getPutOperations_test(AerospikeClient client){
-        Key key = new Key("test", "table1", "mykey1");
+        Key key = new Key("namespace1", "table1", "mykey1");
         // Key key = new Key("adara", "CookieData", "putgetkey");
         Bin bin1 = new Bin("column1", "value1");
         Bin bin2 = new Bin("column2", "value2");
@@ -55,7 +54,7 @@ public class AerospikeConnection {
     }
 
     public static void getPutOperations_adara(AerospikeClient client){
-        Key key = new Key("adara", "CookieData", "putgetkey");
+        Key key = new Key("namespace1", "CookieData", "putgetkey");
 
         CookieData mCookieData = new CookieData();
         Bin bin1 = new Bin("bin1", mCookieData);
@@ -67,7 +66,7 @@ public class AerospikeConnection {
     }
 
     public static void getPutOperations_adara_prod(AerospikeClient client, String cookieId){
-        Key key = new Key("adara", "CookieData", "putgetkey");
+        Key key = new Key("namespace1", "CookieData", "putgetkey");
 
         CookieData mCookieData = ReadBidgen.getCookieDataFromCookieId(cookieId);
         if(mCookieData != null){
@@ -93,7 +92,7 @@ public class AerospikeConnection {
 
         int count = 0;
         for(String cookieId: map.keySet()){
-            Key key = new Key("test", "table16", cookieId);
+            Key key = new Key("namespace1", "table1", cookieId);
             Bin column1 = new Bin("cookieId", cookieId);
             Bin column2 = new Bin("ckvMap", map.get(cookieId));
             //Record r = client.get(null,key);
