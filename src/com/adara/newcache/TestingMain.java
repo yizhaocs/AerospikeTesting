@@ -3,9 +3,11 @@ package com.adara.newcache;
 import com.adara.newcache.aerospikecode.AerospikeConnector;
 import com.adara.newcache.aerospikecode.AerospikeOperation;
 import com.adara.newcache.aerospikecode.OldCode;
+import com.adara.newcache.aerospikecode.Operations.Write;
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
+import com.aerospike.client.policy.WritePolicy;
 import com.opinmind.ssc.KeyValueTs;
 import com.adara.newcache.udcuv2code.ProcessCkvData;
 
@@ -30,19 +32,21 @@ public class TestingMain {
     static Map<String, Map<Integer,KeyValueTs>> map = new HashMap<String, Map<Integer, KeyValueTs>>();
 
 
-    static String database = "namespace1"; // schema/database
+    static String database = "database1"; // schema/database
     static String table = "set1"; // set
     static String columnName1 = "cookieId";
     static String columnName2 = "ckvMap";
     public static void main(String[] args) throws Exception{
-        ProcessCkvData.readThenWrite(map, "src/resources/20170712-004428.ps101-lax1.0000000000010309020.csv");
+        ProcessCkvData.readThenWrite(map, "/Users/yzhao/IdeaProjects/AerospikeTesting/src/resources/20170712-004428.ps101-lax1.0000000000010309020.csv");
         System.out.println(map.size());
         AerospikeClient client = AerospikeConnector.getInstance();
         AerospikeOperation aerospikeOperation = new AerospikeOperation();
         for(String cookieId: map.keySet()) {
-            Key key = new Key(database, table, cookieId);
+            Key key = new Key(database, table, table);
             Bin bin1 = new Bin(columnName1, cookieId);
             Bin bin2 = new Bin(columnName2, map.get(cookieId));
+            Write write = new Write();
+            write.writingMultipleValues(client, new WritePolicy(), key, bin1, bin2);
         }
 
         client.close();
