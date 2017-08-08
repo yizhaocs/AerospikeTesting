@@ -30,20 +30,19 @@ public class TestingMain {
     static Map<String, Map<Integer,KeyValueTs>> map = new HashMap<String, Map<Integer, KeyValueTs>>();
 
 
-    static String nameSpace = "namespace1";
-    static String table = "table1";
-    static String column1 = "cookieId";
-    static String column2 = "ckvMap";
+    static String database = "namespace1"; // schema/database
+    static String table = "set1"; // set
+    static String columnName1 = "cookieId";
+    static String columnName2 = "ckvMap";
     public static void main(String[] args) throws Exception{
         ProcessCkvData.readThenWrite(map, "src/resources/20170712-004428.ps101-lax1.0000000000010309020.csv");
         System.out.println(map.size());
         AerospikeClient client = AerospikeConnector.getInstance();
         AerospikeOperation aerospikeOperation = new AerospikeOperation();
         for(String cookieId: map.keySet()) {
-            Key key = new Key(nameSpace, table, cookieId);
-            Bin bin1 = new Bin(column1, cookieId);
-            Bin bin2 = new Bin(column2, map.get(cookieId));
-            aerospikeOperation.put(client, key, bin1, bin2);
+            Key key = new Key(database, table, cookieId);
+            Bin bin1 = new Bin(columnName1, cookieId);
+            Bin bin2 = new Bin(columnName2, map.get(cookieId));
         }
 
         client.close();
