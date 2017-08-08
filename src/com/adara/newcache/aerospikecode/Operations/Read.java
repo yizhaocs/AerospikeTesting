@@ -19,7 +19,7 @@ public class Read {
      * @param columnName
      * @return
      */
-    public Record getOneBin(AerospikeClient client, Policy policy, Key key, String... columnName){
+    public Record getOneColumn(AerospikeClient client, Policy policy, Key key, String... columnName){
         Record row = client.get(policy, key, columnName);
         return row;
     }
@@ -32,7 +32,7 @@ public class Read {
      * @param key
      * @return
      */
-    public Record getAllBins(AerospikeClient client, Policy policy, Key key){
+    public Record getAllColumns(AerospikeClient client, Policy policy, Key key){
         Record row = client.get(policy, key);
         return row;
     }
