@@ -28,7 +28,8 @@ import java.util.Map;
  */
 public class TestingMain {
     static String database = "database1"; // schema/database
-    static String table = "set2"; // set
+    static String table = "set4"; // set
+    static String primaryKey_userId = "2";
     static String columnName1 = "id";
     static String columnName2 = "uuid";
     static int start = 0;
@@ -36,18 +37,30 @@ public class TestingMain {
 
 
     public static void main(String[] args) throws Exception{
-        testingWithRamdonData();
+        testingWithSingleData();
+    }
+
+    public static void testingWithSingleData() throws Exception{
+        AerospikeClient client = AerospikeConnector.getInstance();
+            Key row = new Key(database, table, primaryKey_userId);
+            Bin bin1 = new Bin(columnName1, "1");
+            Bin bin2 = new Bin(columnName1, "2");
+            Bin bin3 = new Bin(columnName2, UuidGenerator.generateRandomUuid());
+            PutOperation write = new PutOperation();
+            write.writingMultipleValues(client, new WritePolicy(), row, bin1, bin2, bin3);
+
+        client.close();
     }
 
 
     public static void testingWithRamdonData() throws Exception{
         AerospikeClient client = AerospikeConnector.getInstance();
         for(int i = start; i < end; i++) {
-            Key key = new Key(database, table, table);
+            Key row = new Key(database, table, primaryKey_userId);
             Bin bin1 = new Bin(columnName1, i);
-            Bin bin2 = new Bin(columnName2, UuidGenerator.generateRandomUuid());
+            Bin bin2 = new Bin(columnName1, UuidGenerator.generateRandomUuid());
             PutOperation write = new PutOperation();
-            write.writingMultipleValues(client, new WritePolicy(), key, bin1, bin2);
+            write.writingMultipleValues(client, new WritePolicy(), row, bin1, bin2);
         }
 
         client.close();
@@ -59,11 +72,11 @@ public class TestingMain {
         System.out.println(map.size());
         AerospikeClient client = AerospikeConnector.getInstance();
         for(String cookieId: map.keySet()) {
-            Key key = new Key(database, table, table);
+            Key row = new Key(database, table, table);
             Bin bin1 = new Bin(columnName1, cookieId);
             Bin bin2 = new Bin(columnName2, map.get(cookieId));
             PutOperation write = new PutOperation();
-            write.writingMultipleValues(client, new WritePolicy(), key, bin1, bin2);
+            write.writingMultipleValues(client, new WritePolicy(), row, bin1, bin2);
         }
 
         client.close();

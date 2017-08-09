@@ -14,12 +14,12 @@ public class PutOperation {
      *
      * @param client
      * @param writePolicy
-     * @param key
+     * @param row
      * @param column
      * @throws Exception
      */
-    public void writingSingleValue(AerospikeClient client, WritePolicy writePolicy, Key key, Bin column) throws Exception{
-        client.put(writePolicy, key, column);
+    public void writingSingleValue(AerospikeClient client, WritePolicy writePolicy, Key row, Bin column) throws Exception{
+        client.put(writePolicy, row, column);
     }
 
     /**
@@ -27,11 +27,11 @@ public class PutOperation {
      *
      * @param client
      * @param writePolicy
-     * @param key
+     * @param row
      * @param columns
      * @throws Exception
      */
-    public void writingMultipleValues(AerospikeClient client, WritePolicy writePolicy, Key key, Bin ... columns) throws Exception{
-        client.put(writePolicy, key, columns);
+    public void writingMultipleValues(AerospikeClient client, WritePolicy writePolicy, Key row, Bin ... columns) throws Exception{
+        client.put(writePolicy, row, columns);
     }
 }
