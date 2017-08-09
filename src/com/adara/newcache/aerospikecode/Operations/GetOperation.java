@@ -9,7 +9,7 @@ import com.aerospike.client.policy.Policy;
 /**
  * Created by yzhao on 8/8/17.
  */
-public class Read {
+public class GetOperation {
     /**
      * Read Specific Columns/Bins of a Row/Record
      *

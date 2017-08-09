@@ -8,7 +8,7 @@ import com.aerospike.client.policy.WritePolicy;
 /**
  * Created by yzhao on 8/8/17.
  */
-public class Delete {
+public class DeleteOperation {
     /**
      * Delete a Row/Record
      * @param client

@@ -1,9 +1,7 @@
 package com.adara.newcache;
 
 import com.adara.newcache.aerospikecode.AerospikeConnector;
-import com.adara.newcache.aerospikecode.AerospikeOperation;
-import com.adara.newcache.aerospikecode.OldCode;
-import com.adara.newcache.aerospikecode.Operations.Write;
+import com.adara.newcache.aerospikecode.Operations.PutOperation;
 import com.adara.newcache.utils.UuidGenerator;
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
@@ -29,16 +27,12 @@ import java.util.Map;
  * big table: // total time used:114714 milliseconds ,with count:2154, 53.2562674 ms per request
  */
 public class TestingMain {
-
-    static Map<String, Map<Integer,KeyValueTs>> map = new HashMap<String, Map<Integer, KeyValueTs>>();
-
-
     static String database = "database1"; // schema/database
-    static String table = "set1"; // set
-    static String columnName1 = "cookieId";
-    static String columnName2 = "ckvMap";
+    static String table = "set2"; // set
+    static String columnName1 = "id";
+    static String columnName2 = "uuid";
     static int start = 0;
-    static int end = 1000;
+    static int end = 10000;
 
 
     public static void main(String[] args) throws Exception{
@@ -52,7 +46,7 @@ public class TestingMain {
             Key key = new Key(database, table, table);
             Bin bin1 = new Bin(columnName1, i);
             Bin bin2 = new Bin(columnName2, UuidGenerator.generateRandomUuid());
-            Write write = new Write();
+            PutOperation write = new PutOperation();
             write.writingMultipleValues(client, new WritePolicy(), key, bin1, bin2);
         }
 
@@ -60,6 +54,7 @@ public class TestingMain {
     }
 
     public static void testingWithKVmapping() throws Exception{
+        Map<String, Map<Integer,KeyValueTs>> map = new HashMap<String, Map<Integer, KeyValueTs>>();
         ProcessCkvData.readThenWrite(map, "/Users/yzhao/IdeaProjects/AerospikeTesting/src/resources/20170712-004428.ps101-lax1.0000000000010309020.csv");
         System.out.println(map.size());
         AerospikeClient client = AerospikeConnector.getInstance();
@@ -67,7 +62,7 @@ public class TestingMain {
             Key key = new Key(database, table, table);
             Bin bin1 = new Bin(columnName1, cookieId);
             Bin bin2 = new Bin(columnName2, map.get(cookieId));
-            Write write = new Write();
+            PutOperation write = new PutOperation();
             write.writingMultipleValues(client, new WritePolicy(), key, bin1, bin2);
         }
 
@@ -75,8 +70,5 @@ public class TestingMain {
     }
 
 
-    public static void writeToAerospkie(){
-        OldCode.connection(map, "106879103115"); // duration:2824 milliseconds ,with count:2154, 1.31104921 ms per request
-    }
 
 }
