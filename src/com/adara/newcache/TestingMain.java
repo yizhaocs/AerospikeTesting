@@ -4,6 +4,7 @@ import com.adara.newcache.aerospikecode.AerospikeConnector;
 import com.adara.newcache.aerospikecode.AerospikeOperation;
 import com.adara.newcache.aerospikecode.OldCode;
 import com.adara.newcache.aerospikecode.Operations.Write;
+import com.adara.newcache.utils.UuidGenerator;
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
@@ -36,11 +37,32 @@ public class TestingMain {
     static String table = "set1"; // set
     static String columnName1 = "cookieId";
     static String columnName2 = "ckvMap";
+    static int start = 0;
+    static int end = 1000;
+
+
     public static void main(String[] args) throws Exception{
+        testingWithRamdonData();
+    }
+
+
+    public static void testingWithRamdonData() throws Exception{
+        AerospikeClient client = AerospikeConnector.getInstance();
+        for(int i = start; i < end; i++) {
+            Key key = new Key(database, table, table);
+            Bin bin1 = new Bin(columnName1, i);
+            Bin bin2 = new Bin(columnName2, UuidGenerator.generateRandomUuid());
+            Write write = new Write();
+            write.writingMultipleValues(client, new WritePolicy(), key, bin1, bin2);
+        }
+
+        client.close();
+    }
+
+    public static void testingWithKVmapping() throws Exception{
         ProcessCkvData.readThenWrite(map, "/Users/yzhao/IdeaProjects/AerospikeTesting/src/resources/20170712-004428.ps101-lax1.0000000000010309020.csv");
         System.out.println(map.size());
         AerospikeClient client = AerospikeConnector.getInstance();
-        AerospikeOperation aerospikeOperation = new AerospikeOperation();
         for(String cookieId: map.keySet()) {
             Key key = new Key(database, table, table);
             Bin bin1 = new Bin(columnName1, cookieId);
@@ -50,8 +72,8 @@ public class TestingMain {
         }
 
         client.close();
-
     }
+
 
     public static void writeToAerospkie(){
         OldCode.connection(map, "106879103115"); // duration:2824 milliseconds ,with count:2154, 1.31104921 ms per request
