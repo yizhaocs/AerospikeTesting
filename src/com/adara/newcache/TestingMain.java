@@ -1,7 +1,7 @@
 package com.adara.newcache;
 
-import com.adara.newcache.aerospikecode.AerospikeConnector;
-import com.adara.newcache.aerospikecode.Operations.PutOperation;
+import com.adara.newcache.aerospikecode.AerospikeClient.AerospikeConnector;
+import com.adara.newcache.aerospikecode.AerospikeClient.Operations.PutOperation;
 import com.adara.newcache.utils.UuidGenerator;
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;

@@ -1,4 +1,4 @@
-package com.adara.newcache.aerospikecode.Operations;
+package com.adara.newcache.aerospikecode.AerospikeClient.Operations;
 
 /**
  * Created by yzhao on 8/9/17.

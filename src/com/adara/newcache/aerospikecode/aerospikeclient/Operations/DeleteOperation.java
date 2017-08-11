@@ -1,4 +1,4 @@
-package com.adara.newcache.aerospikecode.Operations;
+package com.adara.newcache.aerospikecode.AerospikeClient.Operations;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
