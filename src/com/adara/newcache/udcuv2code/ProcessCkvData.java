@@ -1,3 +1,4 @@
+/*
 package com.adara.newcache.udcuv2code;
 
 import com.aerospike.client.AerospikeClient;
@@ -18,9 +19,11 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+*/
 /**
  * Created by yzhao on 7/14/17.
- */
+ *//*
+
 public class ProcessCkvData {
     private static final Pattern amperSpliter = Pattern.compile("&");
     private static final Pattern equalSpliter = Pattern.compile("=");
@@ -74,9 +77,11 @@ public class ProcessCkvData {
         String domain = getFromDataArray(data, 9, false);
         String userAgent = getFromDataArray(data, 10, true);
 
-        /*Set<Integer> keysGoToEkv = UDCUHelper.getEkvKeys();
+        */
+/*Set<Integer> keysGoToEkv = UDCUHelper.getEkvKeys();
         Set<Integer> keysGoToCkv = UDCUHelper.getCkvKeys();
-        Set<Integer> keysGoToBidgen = UDCUHelper.getBidgenKeys();*/
+        Set<Integer> keysGoToBidgen = UDCUHelper.getBidgenKeys();*//*
+
 
         if (keyValues != null) {
             //Map<Integer,KeyValueTs> keyValuesMap = new HashMap<Integer, KeyValueTs>();
@@ -124,6 +129,7 @@ public class ProcessCkvData {
 
                 map.put(String.valueOf(cookieId), ckvMap);
 
+*/
 /*
                 Key key = new Key("test", "table10", cookieId);
                 Bin column1 = new Bin("cookieId", cookieId);
@@ -133,7 +139,9 @@ public class ProcessCkvData {
                 if(!client.exists(null, key)) {
                     System.out.println(cookieId);
                     try {
-*//*                        EventLoop eventLoop = EventLoopsHelp.eventLoops.get(0);
+*//*
+*/
+/*                        EventLoop eventLoop = EventLoopsHelp.eventLoops.get(0);
                         WriteListener listener = new WriteListener() {
                             @Override
                             public void onSuccess(Key key) {
@@ -145,12 +153,15 @@ public class ProcessCkvData {
 
                             }
                         };*//*
+*/
+/*
                         // client.put(eventLoop, listener, wp, key, column2);
                         client.put(wp, key, column1, column2);
                     }catch(Exception e){
                         e.printStackTrace();
                     }
-                }*/
+                }*//*
+
                 //}
             }
         }
@@ -215,3 +226,4 @@ public class ProcessCkvData {
     }
 
 }
+*/

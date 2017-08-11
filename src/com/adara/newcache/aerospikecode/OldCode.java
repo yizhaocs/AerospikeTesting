@@ -1,3 +1,4 @@
+/*
 package com.adara.newcache.aerospikecode;
 
 import com.aerospike.client.AerospikeClient;
@@ -13,9 +14,11 @@ import com.adara.newcache.udcuv2code.ReadBidgen;
 
 import java.util.Map;
 
+*/
 /**
  * Created by yzhao on 7/14/17.
- */
+ *//*
+
 public class OldCode {
     public static void connection(Map<String, Map<Integer,KeyValueTs>> map, String cookieId){
         ClientPolicy policy = null;
@@ -100,6 +103,7 @@ public class OldCode {
             if(!client.exists(null, key)) {
                 // System.out.println(cookieId);
                 try {
+*/
 /*                        EventLoop eventLoop = EventLoopsHelp.eventLoops.get(0);
                         WriteListener listener = new WriteListener() {
                             @Override
@@ -111,7 +115,8 @@ public class OldCode {
                             public void onFailure(AerospikeException e) {
 
                             }
-                        };*/
+                        };*//*
+
                     // client.put(eventLoop, listener, wp, key, column2);
                     client.put(wp, key, column1, column2);
                     count ++;
@@ -126,3 +131,4 @@ public class OldCode {
         System.out.println("total time used:" + duration + " milliseconds ,with count:" + count);
     }
 }
+*/

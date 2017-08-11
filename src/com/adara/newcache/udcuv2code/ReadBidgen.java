@@ -1,3 +1,4 @@
+/*
 package com.adara.newcache.udcuv2code;
 
 import com.opinmind.bidgen.CookieRouter;
@@ -8,9 +9,11 @@ import com.opinmind.ssc.cache.UserDataCacheFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * Created by yzhao on 7/14/17.
- */
+ *//*
+
 public class ReadBidgen {
     public static RemoteUserDataCacheImplV3 getUserDataCacheBDB()
             throws NumberFormatException, Exception {
@@ -65,3 +68,4 @@ public class ReadBidgen {
     }
 
 }
+*/

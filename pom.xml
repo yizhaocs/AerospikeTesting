@@ -37,24 +37,28 @@
             <version>4.0.6</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/net.sf.trove4j/trove4j -->
+        <!--this is for Spring-->
         <dependency>
-            <groupId>net.sf.trove4j</groupId>
-            <artifactId>trove4j</artifactId>
-            <version>3.0.1</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.framework.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>opinmind</groupId>
-            <artifactId>serversidecookie</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.framework.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>opinmind</groupId>
-            <artifactId>opinmind-common</artifactId>
-            <version>1.0</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.framework.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.framework.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -98,7 +102,7 @@
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
                         <manifest>
-                            <mainClass>Main</mainClass>
+                            <mainClass>com.adara.newcache.TestingMain</mainClass>
                         </manifest>
                     </archive>
 

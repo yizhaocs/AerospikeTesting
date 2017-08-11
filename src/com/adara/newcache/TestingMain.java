@@ -7,8 +7,6 @@ import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
 import com.aerospike.client.policy.WritePolicy;
-import com.opinmind.ssc.KeyValueTs;
-import com.adara.newcache.udcuv2code.ProcessCkvData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +64,7 @@ public class TestingMain {
         client.close();
     }
 
-    public static void testingWithKVmapping() throws Exception{
+  /*  public static void testingWithKVmapping() throws Exception{
         Map<String, Map<Integer,KeyValueTs>> map = new HashMap<String, Map<Integer, KeyValueTs>>();
         ProcessCkvData.readThenWrite(map, "/Users/yzhao/IdeaProjects/AerospikeTesting/src/resources/20170712-004428.ps101-lax1.0000000000010309020.csv");
         System.out.println(map.size());
@@ -81,7 +79,7 @@ public class TestingMain {
 
         client.close();
     }
-
+*/
 
 
 }
