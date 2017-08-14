@@ -18,7 +18,7 @@ public class GetOperation {
      * @param columnName
      * @return
      */
-    public Record getOneColumn(AerospikeClient client, Policy policy, Key key, String... columnName){
+    public Record getSpecificColumnsOfaRow(AerospikeClient client, Policy policy, Key key, String... columnName){
         Record row = client.get(policy, key, columnName);
         return row;
     }
@@ -31,7 +31,7 @@ public class GetOperation {
      * @param key
      * @return
      */
-    public Record getAllColumns(AerospikeClient client, Policy policy, Key key){
+    public Record getRow(AerospikeClient client, Policy policy, Key key){
         Record row = client.get(policy, key);
         return row;
     }
