@@ -8,6 +8,7 @@ import com.adara.newcache.utils.UuidGenerator;
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
+import com.aerospike.client.Record;
 import com.aerospike.client.policy.WritePolicy;
 import com.opinmind.ssc.KeyValueTs;
 
@@ -41,21 +42,37 @@ public class TestingMain {
         AerospikeServiceImpl mAerospikeService = new AerospikeServiceImpl();
         mAerospikeService.init();
 
-        Map<String, Map<Integer,KeyValueTs>> map = new HashMap<String, Map<Integer, KeyValueTs>>();
-        ProcessCkvData.readThenWrite(map, "/Users/yzhao/IdeaProjects/AerospikeTesting/src/resources/20170712-004428.ps101-lax1.0000000000010309020.csv");
-        System.out.println(map.size());
-        for(String cookieId: map.keySet()) {
+        /**
+         * write
+         */
+        Map<String, Map<Integer,KeyValueTs>> processedMap = new HashMap<String, Map<Integer, KeyValueTs>>();
+        ProcessCkvData.readThenWrite(processedMap, "/Users/yzhao/IdeaProjects/AerospikeTesting/src/resources/20170712-004428.ps101-lax1.0000000000010309020.csv");
+        System.out.println(processedMap.size());
+        for(String cookieId: processedMap.keySet()) {
             String userKey = cookieId;
             Key row = new Key(database, table, userKey);
             Bin bin1 = new Bin(columnName1, cookieId);
-            Bin bin2 = new Bin(columnName2, map.get(cookieId));
+            Bin bin2 = new Bin(columnName2, processedMap.get(cookieId));
             mAerospikeService.putColumnForRow(null,row, bin1, bin2);
         }
 
+
+        /**
+         * read
+         */
+        Key row = new Key(database, table, "105797876377");
+
+        Record recordId = mAerospikeService.getSpecificColumnsForRow(null,row,"id");
+        String id = (String)recordId.bins.get("id");
+        System.out.println("id:" + id);
+
+        Record recordMap = mAerospikeService.getSpecificColumnsForRow(null,row,"uuid");
+        Map<Integer,KeyValueTs> map = (Map<Integer,KeyValueTs>)recordMap.bins.get("uuid");
+        System.out.println("map:"+ map);
+
+
         Thread.sleep(10000);
         mAerospikeService.destroy();
-
-
     }
 
     public static void testingWithSingleData() throws Exception{
