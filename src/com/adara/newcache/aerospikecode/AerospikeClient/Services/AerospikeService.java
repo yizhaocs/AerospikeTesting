@@ -1,9 +1,10 @@
-package com.adara.newcache.aerospikecode.AerospikeClient.Service;
+package com.adara.newcache.aerospikecode.AerospikeClient.Services;
 
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
+import com.aerospike.client.async.EventLoop;
 import com.aerospike.client.policy.BatchPolicy;
 import com.aerospike.client.policy.Policy;
 import com.aerospike.client.policy.QueryPolicy;
@@ -40,24 +41,25 @@ public interface AerospikeService {
     public Record getAllColumnsForRow(Policy policy, Key key) throws AerospikeException;
 
     /**
-     * Writing Single Column in a row
-     *
-     * @param writePolicy
-     * @param row
-     * @param column
-     * @throws AerospikeException
-     */
-    public void putSingleColumnForRow(WritePolicy writePolicy, Key row, Bin column) throws AerospikeException;
-
-    /**
-     * Writing Multiple Columns in a row
+     * Writing column/s for a row
      *
      * @param writePolicy
      * @param row
      * @param columns
      * @throws AerospikeException
      */
-    public void putMultipleColumnForRow(WritePolicy writePolicy, Key row, Bin... columns) throws AerospikeException;
+    public void putColumnForRow(WritePolicy writePolicy, Key row, Bin ... columns) throws AerospikeException;
+
+    /**
+     * Writing column/s for a row as in Async Task
+     * @param eventLoop
+     * @param writePolicy
+     * @param row
+     * @param columns
+     * @throws AerospikeException
+     */
+    public void putColumnForRowInAsyncTask(EventLoop eventLoop, WritePolicy writePolicy, Key row, Bin... columns) throws AerospikeException;
+
 
     /**
      * @param writePolicy

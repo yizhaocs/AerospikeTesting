@@ -1,4 +1,4 @@
-package com.adara.newcache.aerospikecode.AerospikeClient.Service;
+package com.adara.newcache.aerospikecode.AerospikeClient.Services;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.AerospikeException;
@@ -6,6 +6,9 @@ import com.aerospike.client.Bin;
 import com.aerospike.client.Host;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
+import com.aerospike.client.async.EventLoop;
+import com.aerospike.client.listener.RecordListener;
+import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.BatchPolicy;
 import com.aerospike.client.policy.ClientPolicy;
 import com.aerospike.client.policy.InfoPolicy;
@@ -17,9 +20,10 @@ import com.aerospike.client.query.IndexType;
 import com.aerospike.client.query.RecordSet;
 import com.aerospike.client.query.Statement;
 import com.aerospike.client.task.IndexTask;
-import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
+import java.net.ConnectException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,14 +35,16 @@ public class AerospikeServiceImpl implements AerospikeService {
 
     private AerospikeClient client;
     private List<String> hostList;
-    private int socketTimeoutForRead;
-    private int totalTimeoutForRead;
-    private int sleepBetweenRetriesForRead;
-    private int socketTimeoutForWrite;
-    private int totalTimeoutForWrite;
-    private int sleepBetweenRetriesForWrite;
+    private int socketTimeoutForReading;
+    private int totalTimeoutForReading;
+    private int sleepBetweenRetriesForReading;
+    private int socketTimeoutForWriting;
+    private int totalTimeoutForWriting;
+    private int sleepBetweenRetriesForWriting;
+    private int maxRetryForWriting;
+    private int maxRetryForReading;
 
-    private StrTokenizer st = StrTokenizer.getCSVInstance();
+//    private StrTokenizer st = StrTokenizer.getCSVInstance();
 
     private ClientPolicy clientPolicyDefault;
     private Policy readPolicyDefault;
@@ -52,29 +58,30 @@ public class AerospikeServiceImpl implements AerospikeService {
      * init the AerospikeClient and polocies
      */
     public void init() {
-        try {
+//        try {
             policiesInit();
 
-            if (hostList != null && hostList.size() > 0) {
-                Host[] hosts = new Host[hostList.size()];
-                int i = 0;
-                for (String ipPort : hostList) {
-                    st.setDelimiterString(":");
-                    String[] result = st.reset(ipPort).getTokenArray(); // ipPort = 192.168.1.114:123
-                    hosts[i] = new Host(result[0], Integer.valueOf(result[1]));
-                    i++;
-                }
-                client = new AerospikeClient(clientPolicyDefault, hosts);
-            } else {
-                log.error("[AerospikeServiceImpl.init]:  hostList is null/empty");
-            }
-        } catch (Exception e) {
-            log.error("[AerospikeServiceImpl.init]: ", e);
-        }
+//            if (hostList != null && hostList.size() > 0) {
+//                Host[] hosts = new Host[hostList.size()];
+//                int i = 0;
+//                for (String ipPort : hostList) {
+//                    st.setDelimiterString(":");
+//                    String[] result = st.reset(ipPort).getTokenArray(); // ipPort = 192.168.1.114:123
+//                    hosts[i] = new Host(result[0], Integer.valueOf(result[1]));
+//                    i++;
+//                }
+                client = new AerospikeClient(clientPolicyDefault, new Host("localhost", 3000));
+//            } else {
+//                log.error("[AerospikeServiceImpl.init]:  hostList is null/empty");
+//            }
+//        } catch (Exception e) {
+//            log.error("[AerospikeServiceImpl.init]: ", e);
+//        }
     }
 
     /**
      * close for entire cluster
+     * When all transactions complete and the application is prepared for a clean shutdown, call the close() method to remove resources held by the AerospikeClient object.
      */
     public void destroy() {
         if (client != null) {
@@ -88,12 +95,12 @@ public class AerospikeServiceImpl implements AerospikeService {
 
     private void policiesInit(){
         this.clientPolicyDefault =  new ClientPolicy();
-        clientPolicyDefault.readPolicyDefault.socketTimeout = socketTimeoutForRead;
-        clientPolicyDefault.readPolicyDefault.totalTimeout = totalTimeoutForRead;
-        clientPolicyDefault.readPolicyDefault.sleepBetweenRetries = sleepBetweenRetriesForRead;
-        clientPolicyDefault.writePolicyDefault.socketTimeout = socketTimeoutForWrite;
-        clientPolicyDefault.writePolicyDefault.totalTimeout = totalTimeoutForWrite;
-        clientPolicyDefault.writePolicyDefault.sleepBetweenRetries = sleepBetweenRetriesForWrite;
+        this.clientPolicyDefault.readPolicyDefault.socketTimeout = socketTimeoutForReading;
+        this.clientPolicyDefault.readPolicyDefault.totalTimeout = totalTimeoutForReading;
+        this.clientPolicyDefault.readPolicyDefault.sleepBetweenRetries = sleepBetweenRetriesForReading;
+        this.clientPolicyDefault.writePolicyDefault.socketTimeout = socketTimeoutForWriting;
+        this.clientPolicyDefault.writePolicyDefault.totalTimeout = totalTimeoutForWriting;
+        this.clientPolicyDefault.writePolicyDefault.sleepBetweenRetries = sleepBetweenRetriesForWriting;
 
         this.readPolicyDefault = new Policy();
         this.writePolicyDefault = new WritePolicy();
@@ -121,6 +128,7 @@ public class AerospikeServiceImpl implements AerospikeService {
     }
 
 
+
     /**
      * Read All Columns/Bins in a Row/Record
      * @param policy
@@ -139,35 +147,31 @@ public class AerospikeServiceImpl implements AerospikeService {
 
 
     /**
-     * Writing Single Column in a row
-     *
-     * @param writePolicy
-     * @param row
-     * @param column
-     * @throws AerospikeException
-     */
-    public void putSingleColumnForRow(WritePolicy writePolicy, Key row, Bin column) throws AerospikeException {
-        if (writePolicy == null) {
-            writePolicy = writePolicyDefault;
-        }
-
-        client.put(writePolicy, row, column);
-    }
-
-    /**
-     * Writing Multiple Columns in a row
+     * Writing column/s for a row
      *
      * @param writePolicy
      * @param row
      * @param columns
      * @throws AerospikeException
      */
-    public void putMultipleColumnForRow(WritePolicy writePolicy, Key row, Bin... columns) throws AerospikeException {
+    public void putColumnForRow(WritePolicy writePolicy, Key row, Bin ... columns) throws AerospikeException {
         if (writePolicy == null) {
             writePolicy = writePolicyDefault;
         }
 
         client.put(writePolicy, row, columns);
+    }
+
+    /**
+     * Writing column/s for a row as in Async Task
+     * @param eventLoop
+     * @param writePolicy
+     * @param row
+     * @param columns
+     * @throws AerospikeException
+     */
+    public void putColumnForRowInAsyncTask(EventLoop eventLoop, WritePolicy writePolicy, Key row, Bin ... columns) throws AerospikeException{
+        client.put(eventLoop, new WriteHandler(client, eventLoop,writePolicy, row, columns), writePolicy, row, columns);
     }
 
     /**
@@ -353,50 +357,66 @@ public class AerospikeServiceImpl implements AerospikeService {
 
     /**
      *
-     * @param sleepBetweenRetriesForWrite
+     * @param totalTimeoutForReading
      */
-    public void setSleepBetweenRetriesForWrite(int sleepBetweenRetriesForWrite) {
-        this.sleepBetweenRetriesForWrite = sleepBetweenRetriesForWrite;
+    public void setTotalTimeoutForReading(int totalTimeoutForReading) {
+        this.totalTimeoutForReading = totalTimeoutForReading;
     }
 
     /**
      *
-     * @param totalTimeoutForWrite
+     * @param socketTimeoutForReading
      */
-    public void setTotalTimeoutForWrite(int totalTimeoutForWrite) {
-        this.totalTimeoutForWrite = totalTimeoutForWrite;
+    public void setSocketTimeoutForReading(int socketTimeoutForReading) {
+        this.socketTimeoutForReading = socketTimeoutForReading;
     }
 
     /**
      *
-     * @param socketTimeoutForWrite
+     * @param sleepBetweenRetriesForReading
      */
-    public void setSocketTimeoutForWrite(int socketTimeoutForWrite) {
-        this.socketTimeoutForWrite = socketTimeoutForWrite;
+    public void setSleepBetweenRetriesForReading(int sleepBetweenRetriesForReading) {
+        this.sleepBetweenRetriesForReading = sleepBetweenRetriesForReading;
     }
 
     /**
      *
-     * @param sleepBetweenRetriesForRead
+     * @param socketTimeoutForWriting
      */
-    public void setSleepBetweenRetriesForRead(int sleepBetweenRetriesForRead) {
-        this.sleepBetweenRetriesForRead = sleepBetweenRetriesForRead;
+    public void setSocketTimeoutForWriting(int socketTimeoutForWriting) {
+        this.socketTimeoutForWriting = socketTimeoutForWriting;
     }
 
     /**
      *
-     * @param totalTimeoutForRead
+     * @param sleepBetweenRetriesForWriting
      */
-    public void setTotalTimeoutForRead(int totalTimeoutForRead) {
-        this.totalTimeoutForRead = totalTimeoutForRead;
+    public void setSleepBetweenRetriesForWriting(int sleepBetweenRetriesForWriting) {
+        this.sleepBetweenRetriesForWriting = sleepBetweenRetriesForWriting;
     }
 
     /**
      *
-     * @param socketTimeoutForRead
+     * @param totalTimeoutForWriting
      */
-    public void setSocketTimeoutForRead(int socketTimeoutForRead) {
-        this.socketTimeoutForRead = socketTimeoutForRead;
+    public void setTotalTimeoutForWriting(int totalTimeoutForWriting) {
+        this.totalTimeoutForWriting = totalTimeoutForWriting;
+    }
+
+    /**
+     *
+     * @param maxRetryForWriting
+     */
+    public void setMaxRetryForWriting(int maxRetryForWriting) {
+        this.maxRetryForWriting = maxRetryForWriting;
+    }
+
+    /**
+     *
+     * @param maxRetryForReading
+     */
+    public void setMaxRetryForReading(int maxRetryForReading) {
+        this.maxRetryForReading = maxRetryForReading;
     }
 
     /**
@@ -410,25 +430,129 @@ public class AerospikeServiceImpl implements AerospikeService {
 
         }
 
+        /**
+         *
+         * @param key
+         * @param record
+         */
         public KeyRecordPair(Key key, Record record){
             this.key = key;
             this.record = record;
         }
 
+        /**
+         *
+         * @return
+         */
         public Key getKey() {
             return key;
         }
 
+        /**
+         *
+         * @param key
+         */
         public void setKey(Key key) {
             this.key = key;
         }
 
+        /**
+         *
+         * @return
+         */
         public Record getRecord() {
             return record;
         }
 
+        /**
+         *
+         * @param record
+         */
         public void setRecord(Record record) {
             this.record = record;
+        }
+    }
+
+    private class ReadHandler implements RecordListener {
+        private final AerospikeClient client;
+        private final EventLoop eventLoop;
+        private final Policy policy;
+        private final Key key;
+        private final Bin bin;
+        private int failCount = 0;
+
+        public ReadHandler(AerospikeClient client, EventLoop eventLoop, Policy policy, Key key, Bin bin) {
+            this.client = client;
+            this.eventLoop = eventLoop;
+            this.policy = policy;
+            this.key = key;
+            this.bin = bin;
+        }
+
+        // Read success callback.
+        public void onSuccess(Key key, Record record) {
+        }
+
+        // Error callback.
+        public void onFailure(AerospikeException e) {
+            // Retry up to 2 more times.
+            if (failCount++ <= maxRetryForReading) {
+                Throwable t = e.getCause();
+
+                // Check for common socket errors.
+                if (t != null && (t instanceof ConnectException || t instanceof IOException)) {
+                    try {
+                        // pass "this" to the second argument of RecordListener to avoid failCount doesn't increment to run into stackoverflow
+                        client.get(eventLoop, this, policy, key);
+                        return;
+                    }
+                    catch (Exception ex) {
+                        throw e;
+                    }
+                }
+            }
+        }
+    }
+
+
+    private class WriteHandler implements WriteListener {
+        private final AerospikeClient client;
+        private final EventLoop eventLoop;
+        private final WritePolicy policy;
+        private final Key key;
+        private final Bin[] bins;
+        private int failCount = 0;
+
+        public WriteHandler(AerospikeClient client, EventLoop eventLoop, WritePolicy policy, Key key, Bin ... bins) {
+            this.client = client;
+            this.eventLoop = eventLoop;
+            this.policy = policy;
+            this.key = key;
+            this.bins = bins;
+        }
+
+        // Write success callback.
+        public void onSuccess(Key key) {
+
+        }
+
+        // Error callback.
+        public void onFailure(AerospikeException e) {
+            if (failCount++ <= maxRetryForWriting) {
+                Throwable t = e.getCause();
+
+                // Check for common socket errors.
+                if (t != null && (t instanceof ConnectException || t instanceof IOException)) {
+                    log.info("[AerospikeServiceImpl.WriteHandler.onFailure] Retrying put: " + key.userKey);
+                    try {
+                        // pass "this" to the second argument of WriteListener to avoid failCount doesn't increment to run into stackoverflow
+                        client.put(eventLoop, this, policy, key, bins);
+                        return;
+                    } catch (Exception ex) {
+                        throw e;
+                    }
+                }
+            }
         }
     }
 }

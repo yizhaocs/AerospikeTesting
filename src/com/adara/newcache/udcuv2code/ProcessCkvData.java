@@ -1,13 +1,15 @@
-/*
 package com.adara.newcache.udcuv2code;
 
-import com.aerospike.client.AerospikeClient;
-import com.aerospike.client.policy.ClientPolicy;
-import com.aerospike.client.policy.WritePolicy;
+
+import com.adara.newcache.aerospikecode.AerospikeClient.EventLoopsHelp;
+import com.aerospike.client.AerospikeException;
+import com.aerospike.client.async.EventLoop;
+import com.aerospike.client.listener.WriteListener;
 import com.opinmind.common.OpinmindConstants;
 import com.opinmind.ssc.KeyValueTs;
 import org.apache.commons.lang.text.StrTokenizer;
-
+import com.aerospike.client.Bin;
+import com.aerospike.client.Key;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,10 +21,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-*/
-/**
- * Created by yzhao on 7/14/17.
- *//*
 
 public class ProcessCkvData {
     private static final Pattern amperSpliter = Pattern.compile("&");
@@ -76,11 +74,12 @@ public class ProcessCkvData {
         String refererUrl = getFromDataArray(data, 8, true);
         String domain = getFromDataArray(data, 9, false);
         String userAgent = getFromDataArray(data, 10, true);
+/*
 
-        */
-/*Set<Integer> keysGoToEkv = UDCUHelper.getEkvKeys();
+        Set<Integer> keysGoToEkv = UDCUHelper.getEkvKeys();
         Set<Integer> keysGoToCkv = UDCUHelper.getCkvKeys();
-        Set<Integer> keysGoToBidgen = UDCUHelper.getBidgenKeys();*//*
+        Set<Integer> keysGoToBidgen = UDCUHelper.getBidgenKeys();
+*/
 
 
         if (keyValues != null) {
@@ -129,40 +128,6 @@ public class ProcessCkvData {
 
                 map.put(String.valueOf(cookieId), ckvMap);
 
-*/
-/*
-                Key key = new Key("test", "table10", cookieId);
-                Bin column1 = new Bin("cookieId", cookieId);
-                Bin column2 = new Bin("ckvMap", ckvMap);
-                //Record r = client.get(null,key);
-                //if(r!= null && !r.bins.containsKey(cookieId)) {
-                if(!client.exists(null, key)) {
-                    System.out.println(cookieId);
-                    try {
-*//*
-*/
-/*                        EventLoop eventLoop = EventLoopsHelp.eventLoops.get(0);
-                        WriteListener listener = new WriteListener() {
-                            @Override
-                            public void onSuccess(Key key) {
-
-                            }
-
-                            @Override
-                            public void onFailure(AerospikeException e) {
-
-                            }
-                        };*//*
-*/
-/*
-                        // client.put(eventLoop, listener, wp, key, column2);
-                        client.put(wp, key, column1, column2);
-                    }catch(Exception e){
-                        e.printStackTrace();
-                    }
-                }*//*
-
-                //}
             }
         }
     }
@@ -226,4 +191,3 @@ public class ProcessCkvData {
     }
 
 }
-*/

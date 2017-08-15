@@ -60,6 +60,11 @@
             <version>${spring.framework.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>opinmind</groupId>
+            <artifactId>serversidecookie</artifactId>
+        </dependency>
+
     </dependencies>
 
 
