@@ -1,22 +1,14 @@
 package com.adara.newcache;
 
-import com.adara.newcache.aerospikecode.AerospikeClient.AerospikeConnector;
-import com.adara.newcache.aerospikecode.AerospikeClient.Operations.PutOperation;
-import com.adara.newcache.aerospikecode.AerospikeClient.Services.AerospikeServiceImpl;
+
 import com.adara.newcache.udcuv2code.ProcessCkvData;
 import com.adara.newcache.utils.UuidGenerator;
 import com.aerospike.client.AerospikeClient;
-import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
-import com.aerospike.client.Record;
-import com.aerospike.client.async.EventLoop;
-import com.aerospike.client.async.EventLoops;
-import com.aerospike.client.async.NioEventLoops;
-import com.aerospike.client.listener.RecordListener;
-import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.WritePolicy;
 import com.opinmind.ssc.KeyValueTs;
+import com.opinmind.ssc.cache.AerospikeServiceImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +28,7 @@ import java.util.Map;
  */
 public class TestingMain {
     static String database = "database1"; // schema/database
-    static String table = "set44"; // set
+    static String table = "set45"; // set
     static String columnName1 = "id";
     static String columnName2 = "kv";
     static int start = 0;
@@ -64,7 +56,7 @@ public class TestingMain {
             Bin bin1 = new Bin(columnName1, i);
             Bin bin2 = new Bin(columnName2, "-" + i);
 
-            mAerospikeService.putColumnForRowInAsync(null, mAerospikeService.new WriteHandler(null, row, bin1, bin2),row, bin1, bin2);
+            mAerospikeService.putColumnForRowInAsync(null, mAerospikeService.new WriteHandlerAsync(null, row, bin1, bin2),row, bin1, bin2);
             i++;
 
           //  mAerospikeService.getAllColumnsForRowInAsync(new AerospikeServiceImpl.ReadHandler(),null,row);
@@ -73,37 +65,15 @@ public class TestingMain {
 
 
 
-
-/*
-
-        */
-/**
-         * read
-         *//*
-
-        Key row = new Key(database, table, "105797876377");
-
-        Record recordId = mAerospikeService.getSpecificColumnsForRow(null,row,"id");
-        String id = (String)recordId.bins.get("id");
-        System.out.println("id:" + id);
-
-        Record recordMap = mAerospikeService.getSpecificColumnsForRow(null,row,"uuid");
-        Map<Integer,KeyValueTs> map = (Map<Integer,KeyValueTs>)recordMap.bins.get("uuid");
-        System.out.println("map:"+ map);
-*/
-
-        /*
-        Key row = new Key(database, table, "1");
-        Bin bin1 = new Bin(columnName1, "1");
-        Bin bin2 = new Bin(columnName2, "123");
-        mAerospikeService.putColumnForRow(null,row, bin1, bin2);
-        */
         mAerospikeService.destroy();
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
         System.out.println("duration:" + duration + " milliseconds");
     }
+
+
+/*
 
     public static void testingWithSingleData() throws Exception{
         AerospikeClient client = AerospikeConnector.getInstance();
@@ -130,6 +100,7 @@ public class TestingMain {
 
         client.close();
     }
+*/
 
   /*  public static void testingWithKVmapping() throws Exception{
         Map<String, Map<Integer,KeyValueTs>> map = new HashMap<String, Map<Integer, KeyValueTs>>();
