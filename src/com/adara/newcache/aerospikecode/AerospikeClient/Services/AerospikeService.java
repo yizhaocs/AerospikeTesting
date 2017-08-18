@@ -5,6 +5,7 @@ import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
 import com.aerospike.client.async.EventLoop;
+import com.aerospike.client.listener.RecordListener;
 import com.aerospike.client.policy.BatchPolicy;
 import com.aerospike.client.policy.Policy;
 import com.aerospike.client.policy.QueryPolicy;
@@ -12,6 +13,7 @@ import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.client.query.IndexType;
 import com.aerospike.client.query.RecordSet;
 import com.aerospike.client.query.Statement;
+import com.opinmind.ssc.cache.*;
 
 import java.util.List;
 
@@ -40,6 +42,7 @@ public interface AerospikeService {
      */
     public Record getAllColumnsForRow(Policy policy, Key key) throws AerospikeException;
 
+
     /**
      * Writing column/s for a row
      *
@@ -51,23 +54,13 @@ public interface AerospikeService {
     public void putColumnForRow(WritePolicy writePolicy, Key row, Bin ... columns) throws AerospikeException;
 
     /**
-     * Writing column/s for a row as in Async Task
-     * @param eventLoop
+     * Writing column/s for a row in Async
      * @param writePolicy
      * @param row
      * @param columns
      * @throws AerospikeException
      */
-    public void putColumnForRowInAsyncTask(EventLoop eventLoop, WritePolicy writePolicy, Key row, Bin... columns) throws AerospikeException;
-
-
-    /**
-     * @param writePolicy
-     * @param row
-     * @param column
-     * @throws AerospikeException
-     */
-    public void addSingleColumnForRow(WritePolicy writePolicy, Key row, Bin column) throws AerospikeException;
+    public void putColumnForRowInAsync(WritePolicy writePolicy, AerospikeServiceImpl.WriteHandler writeHandler, Key row, Bin ... columns) throws AerospikeException;
 
     /**
      * @param writePolicy
@@ -75,7 +68,7 @@ public interface AerospikeService {
      * @param columns
      * @throws AerospikeException
      */
-    public void addMultipleColumnForRow(WritePolicy writePolicy, Key row, Bin... columns) throws AerospikeException;
+    public void addColumnForRow(WritePolicy writePolicy, Key row, Bin ... columns) throws AerospikeException;
 
     /**
      * To delete a column/bin for a row/key, set the column/bin value to NULL:

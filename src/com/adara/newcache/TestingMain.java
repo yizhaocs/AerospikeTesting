@@ -6,9 +6,15 @@ import com.adara.newcache.aerospikecode.AerospikeClient.Services.AerospikeServic
 import com.adara.newcache.udcuv2code.ProcessCkvData;
 import com.adara.newcache.utils.UuidGenerator;
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
+import com.aerospike.client.async.EventLoop;
+import com.aerospike.client.async.EventLoops;
+import com.aerospike.client.async.NioEventLoops;
+import com.aerospike.client.listener.RecordListener;
+import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.WritePolicy;
 import com.opinmind.ssc.KeyValueTs;
 
@@ -30,9 +36,9 @@ import java.util.Map;
  */
 public class TestingMain {
     static String database = "database1"; // schema/database
-    static String table = "set4"; // set
+    static String table = "set44"; // set
     static String columnName1 = "id";
-    static String columnName2 = "uuid";
+    static String columnName2 = "kv";
     static int start = 0;
     static int end = 10000;
 
@@ -42,24 +48,39 @@ public class TestingMain {
         AerospikeServiceImpl mAerospikeService = new AerospikeServiceImpl();
         mAerospikeService.init();
 
+
+
         /**
          * write
          */
         Map<String, Map<Integer,KeyValueTs>> processedMap = new HashMap<String, Map<Integer, KeyValueTs>>();
         ProcessCkvData.readThenWrite(processedMap, "/Users/yzhao/IdeaProjects/AerospikeTesting/src/resources/20170712-004428.ps101-lax1.0000000000010309020.csv");
         System.out.println(processedMap.size());
+        int i = 0;
+        long startTime = System.nanoTime();
         for(String cookieId: processedMap.keySet()) {
             String userKey = cookieId;
-            Key row = new Key(database, table, userKey);
-            Bin bin1 = new Bin(columnName1, cookieId);
-            Bin bin2 = new Bin(columnName2, processedMap.get(cookieId));
-            mAerospikeService.putColumnForRow(null,row, bin1, bin2);
+            Key row = new Key(database, table, i);
+            Bin bin1 = new Bin(columnName1, i);
+            Bin bin2 = new Bin(columnName2, "-" + i);
+
+            mAerospikeService.putColumnForRowInAsync(null, mAerospikeService.new WriteHandler(null, row, bin1, bin2),row, bin1, bin2);
+            i++;
+
+          //  mAerospikeService.getAllColumnsForRowInAsync(new AerospikeServiceImpl.ReadHandler(),null,row);
+            //mAerospikeService.putColumnForRow(null,row, bin1, bin2);
         }
 
 
-        /**
+
+
+/*
+
+        */
+/**
          * read
-         */
+         *//*
+
         Key row = new Key(database, table, "105797876377");
 
         Record recordId = mAerospikeService.getSpecificColumnsForRow(null,row,"id");
@@ -69,10 +90,19 @@ public class TestingMain {
         Record recordMap = mAerospikeService.getSpecificColumnsForRow(null,row,"uuid");
         Map<Integer,KeyValueTs> map = (Map<Integer,KeyValueTs>)recordMap.bins.get("uuid");
         System.out.println("map:"+ map);
+*/
 
-
-        Thread.sleep(10000);
+        /*
+        Key row = new Key(database, table, "1");
+        Bin bin1 = new Bin(columnName1, "1");
+        Bin bin2 = new Bin(columnName2, "123");
+        mAerospikeService.putColumnForRow(null,row, bin1, bin2);
+        */
         mAerospikeService.destroy();
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+        System.out.println("duration:" + duration + " milliseconds");
     }
 
     public static void testingWithSingleData() throws Exception{
@@ -91,7 +121,7 @@ public class TestingMain {
     public static void testingWithRamdonData() throws Exception{
         AerospikeClient client = AerospikeConnector.getInstance();
         for(int i = start; i < end; i++) {
-            Key row = new Key(database, table, "1");
+            Key row = new Key(database, table, "i");
             Bin bin1 = new Bin(columnName1, i);
             Bin bin2 = new Bin(columnName1, UuidGenerator.generateRandomUuid());
             PutOperation write = new PutOperation();

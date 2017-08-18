@@ -6,7 +6,15 @@ import com.aerospike.client.Bin;
 import com.aerospike.client.Host;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
+import com.aerospike.client.async.AsyncClient;
+import com.aerospike.client.async.AsyncClientPolicy;
 import com.aerospike.client.async.EventLoop;
+import com.aerospike.client.async.EventLoops;
+import com.aerospike.client.async.EventPolicy;
+import com.aerospike.client.async.MaxCommandAction;
+import com.aerospike.client.async.Monitor;
+import com.aerospike.client.async.NettyEventLoops;
+import com.aerospike.client.async.NioEventLoops;
 import com.aerospike.client.listener.RecordListener;
 import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.BatchPolicy;
@@ -20,12 +28,18 @@ import com.aerospike.client.query.IndexType;
 import com.aerospike.client.query.RecordSet;
 import com.aerospike.client.query.Statement;
 import com.aerospike.client.task.IndexTask;
+import com.opinmind.clog.data.Event;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * @author yzhao
@@ -35,42 +49,43 @@ public class AerospikeServiceImpl implements AerospikeService {
 
     private AerospikeClient client;
     private List<String> hostList;
+    private EventLoops eventLoops;
     private int socketTimeoutForReading;
     private int totalTimeoutForReading;
     private int sleepBetweenRetriesForReading;
     private int socketTimeoutForWriting;
     private int totalTimeoutForWriting;
     private int sleepBetweenRetriesForWriting;
+    private int writeTimeout;
     private int maxRetryForWriting;
-    private int maxRetryForReading;
 
-//    private StrTokenizer st = StrTokenizer.getCSVInstance();
+    private int concurrentMax;
 
-    private ClientPolicy clientPolicyDefault;
-    private Policy readPolicyDefault;
-    private WritePolicy writePolicyDefault;
-    private ScanPolicy scanPolicyDefault;
-    private QueryPolicy queryPolicyDefault;
-    private BatchPolicy batchPolicyDefault;
-    private InfoPolicy infoPolicyDefault;
+    private StrTokenizer st = StrTokenizer.getCSVInstance();
+
+    private ClientPolicy clientPolicyDefault = new ClientPolicy();
+    private Policy readPolicyDefault = new Policy();
+    private WritePolicy writePolicyDefault = new WritePolicy();
+    private ScanPolicy scanPolicyDefault = new ScanPolicy();
+    private QueryPolicy queryPolicyDefault = new QueryPolicy();
+    private BatchPolicy batchPolicyDefault = new BatchPolicy();
+    private InfoPolicy infoPolicyDefault = new InfoPolicy();
+    private EventPolicy eventPolicy = new EventPolicy();
 
     /**
      * init the AerospikeClient and polocies
      */
     public void init() {
-//        try {
+            int eventLoopSize = Runtime.getRuntime().availableProcessors(); // Allocate an event loop for each cpu core.
+            eventPolicy.minTimeout = writeTimeout;
+            eventLoops = new NioEventLoops(eventPolicy, eventLoopSize); // Direct NIO
+            concurrentMax = eventLoopSize * 40; // Allow 40 concurrent commands per event loop.
             policiesInit();
 
-//            if (hostList != null && hostList.size() > 0) {
-//                Host[] hosts = new Host[hostList.size()];
-//                int i = 0;
-//                for (String ipPort : hostList) {
-//                    st.setDelimiterString(":");
-//                    String[] result = st.reset(ipPort).getTokenArray(); // ipPort = 192.168.1.114:123
-//                    hosts[i] = new Host(result[0], Integer.valueOf(result[1]));
-//                    i++;
-//                }
-                client = new AerospikeClient(clientPolicyDefault, new Host("localhost", 3000));
+
+
+        client = new AerospikeClient(clientPolicyDefault, new Host("localhost", 3000));
+        System.out.println("eventLoops.getArray().length:" + eventLoops.getArray().length);
 //            } else {
 //                log.error("[AerospikeServiceImpl.init]:  hostList is null/empty");
 //            }
@@ -84,30 +99,35 @@ public class AerospikeServiceImpl implements AerospikeService {
      * When all transactions complete and the application is prepared for a clean shutdown, call the close() method to remove resources held by the AerospikeClient object.
      */
     public void destroy() {
-        if (client != null) {
-            try {
+        try {
+            if (client != null) {
                 client.close();
+            }
+        } catch (Exception e) {
+            log.error("[AerospikeServiceImpl.destroy]: ", e);
+        } finally {
+            try {
+                if (eventLoops != null) {
+                    eventLoops.close();
+                }
             } catch (Exception e) {
-                log.error("[AerospikeServiceImpl.client]: ", e);
+                log.error("[AerospikeServiceImpl.destroy]: ", e);
             }
         }
     }
 
     private void policiesInit(){
-        this.clientPolicyDefault =  new ClientPolicy();
+        this.clientPolicyDefault.eventLoops = eventLoops;
+        this.clientPolicyDefault.maxConnsPerNode = concurrentMax;
+
         this.clientPolicyDefault.readPolicyDefault.socketTimeout = socketTimeoutForReading;
         this.clientPolicyDefault.readPolicyDefault.totalTimeout = totalTimeoutForReading;
         this.clientPolicyDefault.readPolicyDefault.sleepBetweenRetries = sleepBetweenRetriesForReading;
         this.clientPolicyDefault.writePolicyDefault.socketTimeout = socketTimeoutForWriting;
         this.clientPolicyDefault.writePolicyDefault.totalTimeout = totalTimeoutForWriting;
         this.clientPolicyDefault.writePolicyDefault.sleepBetweenRetries = sleepBetweenRetriesForWriting;
+        this.clientPolicyDefault.writePolicyDefault.setTimeout(writeTimeout);
 
-        this.readPolicyDefault = new Policy();
-        this.writePolicyDefault = new WritePolicy();
-        this.scanPolicyDefault = new ScanPolicy();
-        this.queryPolicyDefault = new QueryPolicy();
-        this.batchPolicyDefault = new BatchPolicy();
-        this.infoPolicyDefault = new InfoPolicy();
     }
 
     /**
@@ -163,30 +183,17 @@ public class AerospikeServiceImpl implements AerospikeService {
     }
 
     /**
-     * Writing column/s for a row as in Async Task
-     * @param eventLoop
+     * Writing column/s for a row in Async
      * @param writePolicy
      * @param row
      * @param columns
      * @throws AerospikeException
      */
-    public void putColumnForRowInAsyncTask(EventLoop eventLoop, WritePolicy writePolicy, Key row, Bin ... columns) throws AerospikeException{
-        client.put(eventLoop, new WriteHandler(client, eventLoop,writePolicy, row, columns), writePolicy, row, columns);
+    public void putColumnForRowInAsync(WritePolicy writePolicy, WriteHandler writeHandler,Key row, Bin ... columns) throws AerospikeException {
+        EventLoop eventloop = eventLoops.next(); // Find an event loop from eventLoops created in connect example.
+        client.put(eventloop, writeHandler, writePolicy, row, columns);
     }
 
-    /**
-     * @param writePolicy
-     * @param row
-     * @param column
-     * @throws AerospikeException
-     */
-    public void addSingleColumnForRow(WritePolicy writePolicy, Key row, Bin column) throws AerospikeException {
-        if (writePolicy == null) {
-            writePolicy = writePolicyDefault;
-        }
-
-        client.add(writePolicy, row, column);
-    }
 
     /**
      * @param writePolicy
@@ -194,10 +201,11 @@ public class AerospikeServiceImpl implements AerospikeService {
      * @param columns
      * @throws AerospikeException
      */
-    public void addMultipleColumnForRow(WritePolicy writePolicy, Key row, Bin... columns) throws AerospikeException {
+    public void addColumnForRow(WritePolicy writePolicy, Key row, Bin ... columns) throws AerospikeException {
         if (writePolicy == null) {
             writePolicy = writePolicyDefault;
         }
+
         client.add(writePolicy, row, columns);
     }
 
@@ -413,10 +421,10 @@ public class AerospikeServiceImpl implements AerospikeService {
 
     /**
      *
-     * @param maxRetryForReading
+     * @param writeTimeout
      */
-    public void setMaxRetryForReading(int maxRetryForReading) {
-        this.maxRetryForReading = maxRetryForReading;
+    public void setWriteTimeout(int writeTimeout) {
+        this.writeTimeout = writeTimeout;
     }
 
     /**
@@ -473,59 +481,13 @@ public class AerospikeServiceImpl implements AerospikeService {
         }
     }
 
-    private class ReadHandler implements RecordListener {
-        private final AerospikeClient client;
-        private final EventLoop eventLoop;
-        private final Policy policy;
-        private final Key key;
-        private final Bin bin;
+    public class WriteHandler implements WriteListener {
+        private WritePolicy policy;
+        private Key key;
+        private Bin[] bins;
         private int failCount = 0;
 
-        public ReadHandler(AerospikeClient client, EventLoop eventLoop, Policy policy, Key key, Bin bin) {
-            this.client = client;
-            this.eventLoop = eventLoop;
-            this.policy = policy;
-            this.key = key;
-            this.bin = bin;
-        }
-
-        // Read success callback.
-        public void onSuccess(Key key, Record record) {
-        }
-
-        // Error callback.
-        public void onFailure(AerospikeException e) {
-            // Retry up to 2 more times.
-            if (failCount++ <= maxRetryForReading) {
-                Throwable t = e.getCause();
-
-                // Check for common socket errors.
-                if (t != null && (t instanceof ConnectException || t instanceof IOException)) {
-                    try {
-                        // pass "this" to the second argument of RecordListener to avoid failCount doesn't increment to run into stackoverflow
-                        client.get(eventLoop, this, policy, key);
-                        return;
-                    }
-                    catch (Exception ex) {
-                        throw e;
-                    }
-                }
-            }
-        }
-    }
-
-
-    private class WriteHandler implements WriteListener {
-        private final AerospikeClient client;
-        private final EventLoop eventLoop;
-        private final WritePolicy policy;
-        private final Key key;
-        private final Bin[] bins;
-        private int failCount = 0;
-
-        public WriteHandler(AerospikeClient client, EventLoop eventLoop, WritePolicy policy, Key key, Bin ... bins) {
-            this.client = client;
-            this.eventLoop = eventLoop;
+        public WriteHandler(WritePolicy policy, Key key, Bin ... bins) {
             this.policy = policy;
             this.key = key;
             this.bins = bins;
@@ -533,25 +495,23 @@ public class AerospikeServiceImpl implements AerospikeService {
 
         // Write success callback.
         public void onSuccess(Key key) {
-
+            // do nothing
         }
 
         // Error callback.
         public void onFailure(AerospikeException e) {
             if (failCount++ <= maxRetryForWriting) {
-                Throwable t = e.getCause();
-
-                // Check for common socket errors.
-                if (t != null && (t instanceof ConnectException || t instanceof IOException)) {
-                    log.info("[AerospikeServiceImpl.WriteHandler.onFailure] Retrying put: " + key.userKey);
-                    try {
-                        // pass "this" to the second argument of WriteListener to avoid failCount doesn't increment to run into stackoverflow
-                        client.put(eventLoop, this, policy, key, bins);
-                        return;
-                    } catch (Exception ex) {
-                        throw e;
-                    }
+                try {
+                    // pass "this" to the second argument of WriteHandler to avoid failCount doesn't increment to run into stackoverflow
+                    putColumnForRowInAsync(policy, this, key, bins);
+                    return;
+                } catch (Exception ex) {
+                    log.error("[AerospikeServiceImpl.WriteHandler.onFailure]: ", e);
+                    throw e;
                 }
+            } else{
+                log.error("[AerospikeServiceImpl.WriteHandler.onFailure]: ", e);
+                throw e;
             }
         }
     }
