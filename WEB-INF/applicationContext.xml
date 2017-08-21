@@ -19,6 +19,59 @@
         </property>-->
     </bean>
 
+    <bean id="userDataCacheMC" class="com.opinmind.ssc.cache.UserDataCacheFactory"
+          factory-method="createUserDataCache" init-method="init"
+          destroy-method="destroy" depends-on="spyMemcachedTimeoutInit">
+        <constructor-arg ref="marketplaceLocalReadOnlyDataSource" /> <!-- Data source with cache table -->
+        <constructor-arg type="int" value="${udc.dprefresh.seconds}" /> <!-- dpRefreshSeconds: how often to refresh dp info -->
+        <constructor-arg type="java.lang.String" value="${udc.cache.name}" /> <!-- cacheName( for table lookup ) -->
+        <constructor-arg type="int" value="5" /> <!-- user limit in completeKeyValues() -->
+    </bean>
+
+    <!-- Bug 7427: override default Spy timeout -->
+    <bean id="spyMemcachedTimeoutInit"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>com.opinmind.common.cache.SpyMemcached</value>
+        </property>
+        <property name="targetMethod">
+            <value>setDefaultOperationTimeoutMs</value>
+        </property>
+        <property name="arguments">
+            <list>
+                <value>2000</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!--
+
+        <bean id="memcacheService" class="com.opinmind.ssc.cache.UserDataCacheImpl"
+              init-method="init" destroy-method="destroy">
+            <property name="partitions" ref="doSomethingService"/>
+            <constructor-arg ref="marketplaceLocalReadOnlyDataSource" /> &lt;!&ndash; Data source with cache table &ndash;&gt;
+            <constructor-arg type="int" value="${udc.dprefresh.seconds}" /> &lt;!&ndash; dpRefreshSeconds: how often to refresh dp info &ndash;&gt;
+            <constructor-arg type="java.lang.String" value="${udc.cache.name}" /> &lt;!&ndash; cacheName( for table lookup ) &ndash;&gt;
+            <constructor-arg type="int" value="5" /> &lt;!&ndash; user limit in completeKeyValues() &ndash;&gt;
+        </bean>
+    -->
+
+    <bean id="marketplaceLocalReadOnlyDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="username" value="${db.ro.user}" />
+        <property name="password" value="${db.ro.password}" />
+        <property name="testOnBorrow" value="true" />
+        <property name="validationQuery" value="SELECT 1" />
+        <property name="url"
+                  value="jdbc:mysql://${marketplace.ro.db.svr}/marketplace?connectTimeout=20000" />
+        <property name="maxActive" value="5" />
+        <property name="minIdle" value="1" />
+    </bean>
+
+
+
     <bean id="aerospikeTestingServlet" class="com.adara.newcache.servlet.AerospikeTestingServlet"
           init-method="init" destroy-method="destroy">
         <property name="aerospikeService" ref="aerospikeService"/>

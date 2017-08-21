@@ -23,7 +23,7 @@
 	<bean id="configFileList" class="java.util.LinkedList">
 		<constructor-arg>
 			<list>
-				<!--<value>file:///opt/opinmind/conf/ekvsummarybackfill/config.properties</value>-->
+				<value>file:///opt/opinmind/conf/udcuv2/config.properties</value>
 			</list>
 		</constructor-arg>
 	</bean>
