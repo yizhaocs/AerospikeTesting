@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * curl "http://localhost:8080/webappservicewithservletexample/memcacheTesting?mode=read"
- * curl "http://localhost:8080/webappservicewithservletexample/memcacheTesting?mode=write"
+ * curl "http://localhost:8080/aero/memcacheTesting?mode=read"
+ * curl "http://localhost:8080/aero/memcacheTesting?mode=write"
  *
  */
 
@@ -17,6 +17,11 @@ public class MemcacheTestingServlet implements HttpRequestHandler {
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String mode = req.getParameter("mode");
+        if(mode.equals("read")){
+
+        }else if(mode.equals("write")){
+
+        }
 
 
     }

@@ -21,6 +21,7 @@
 
     <bean id="aerospikeTestingServlet" class="com.adara.newcache.servlet.AerospikeTestingServlet"
           init-method="init" destroy-method="destroy">
+        <property name="aerospikeService" ref="aerospikeService"/>
     </bean>
 
     <bean id="memcacheTestingServlet" class="com.adara.newcache.servlet.MemcacheTestingServlet"
