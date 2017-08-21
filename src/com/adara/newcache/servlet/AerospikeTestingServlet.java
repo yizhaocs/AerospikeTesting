@@ -13,9 +13,9 @@ import java.io.IOException;
 
 
 /**
- * mvn clean package install  -Dmaven.test.skip=true -DskipTests=true
- * curl "http://localhost:8080/aero/aerospiketesting?mode=read&start=0&end=2000&database=database1&table=set47"
- * curl "http://localhost:8080/aero/aerospiketesting?mode=write&start=0&end=2000&database=database1&table=set47"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&start=0&end=2000&database=database1&table=set47"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&start=0&end=2000&database=database1&table=set47"
+ *
  *
  */
 

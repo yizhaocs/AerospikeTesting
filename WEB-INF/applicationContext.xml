@@ -17,18 +17,18 @@
 
     <bean id="aerospikeService" class="com.opinmind.ssc.cache.AerospikeServiceImpl"
           init-method="init" destroy-method="destroy">
-        <property name="hostList">
+      <!--  <property name="hostList">
         <list>
             <value>localhost:3000</value>
         </list>
-        </property>
-     <!--  <property name="hostList">
+        </property>-->
+     <property name="hostList">
             <list>
                 <value>qa1-aero1:3000</value>
                 <value>qa1-aero2:3000</value>
                 <value>qa1-aero3:3000</value>
             </list>
-        </property>-->
+        </property>
     </bean>
 
     <bean id="userDataCacheMC" class="com.opinmind.ssc.cache.UserDataCacheFactory"
