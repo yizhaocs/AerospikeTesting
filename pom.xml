@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>opt.opinmind</groupId>
+    <groupId>opinmind</groupId>
     <artifactId>aerospiketesting</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>aerospiketesting</name>
@@ -159,7 +159,7 @@
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
                         <manifest>
-                            <mainClass>com.opinmind.ekvsumbf.Processors.BackfillProcessor</mainClass>
+                            <!--<mainClass>com.opinmind.ekvsumbf.Processors.BackfillProcessor</mainClass>-->
                         </manifest>
                     </archive>
 
@@ -178,7 +178,6 @@
 
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.1.0</version>
                 <configuration>
                     <warName>aerospiketesting</warName>
                     <webXml>WEB-INF/web.xml</webXml>
@@ -219,20 +218,18 @@
              </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>3.0.2</version>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
                         <phase>compile</phase>
                         <goals>
-                            <goal>test-jar</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>2.5.2</version>
                 <artifactId>maven-install-plugin</artifactId>
                 <executions>
                     <execution>
@@ -241,12 +238,12 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <packaging>war</packaging>
+                            <packaging>jar</packaging>
                             <artifactId>${project.artifactId}</artifactId>
                             <groupId>${project.groupId}</groupId>
                             <version>${project.version}</version>
                             <file>
-                                ${project.build.directory}/${project.artifactId}-jar-with-dependencies.jar
+                                ${project.build.directory}/${project.groupId}-${project.artifactId}.jar
                             </file>
                         </configuration>
                     </execution>
