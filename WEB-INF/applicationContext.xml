@@ -35,8 +35,8 @@
           factory-method="createUserDataCache" init-method="init"
           destroy-method="destroy" depends-on="spyMemcachedTimeoutInit">
         <constructor-arg ref="marketplaceLocalReadOnlyDataSource" /> <!-- Data source with cache table -->
-        <constructor-arg type="int" value="${udc.dprefresh.seconds}" /> <!-- dpRefreshSeconds: how often to refresh dp info -->
-        <constructor-arg type="java.lang.String" value="${udc.cache.name}" /> <!-- cacheName( for table lookup ) -->
+        <constructor-arg type="int" value="30" /> <!-- dpRefreshSeconds: how often to refresh dp info -->
+        <constructor-arg type="java.lang.String" value="UDC-QA1" /> <!-- cacheName( for table lookup ) -->
         <constructor-arg type="int" value="5" /> <!-- user limit in completeKeyValues() -->
     </bean>
 
@@ -72,12 +72,12 @@
     <bean id="marketplaceLocalReadOnlyDataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="username" value="${db.ro.user}" />
-        <property name="password" value="${db.ro.password}" />
+        <property name="username" value="om" />
+        <property name="password" value="N3wQA3ra." />
         <property name="testOnBorrow" value="true" />
         <property name="validationQuery" value="SELECT 1" />
         <property name="url"
-                  value="jdbc:mysql://${marketplace.ro.db.svr}/marketplace?connectTimeout=20000" />
+                  value="jdbc:mysql://qa-ssmdb/marketplace?connectTimeout=20000" />
         <property name="maxActive" value="5" />
         <property name="minIdle" value="1" />
     </bean>
