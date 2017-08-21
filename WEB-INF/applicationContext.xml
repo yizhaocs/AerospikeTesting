@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="aerospikeService" class="com.opinmind.ssc.cache.AerospikeServiceImpl"
+          init-method="init" destroy-method="destroy">
+        <property name="hostList">
+        <list>
+            <value>localhost:3000</value>
+        </list>
+        </property>
+       <!-- <property name="hostList">
+            <list>
+                <value>qa1-aero1:3000</value>
+                <value>qa1-aero2:3000</value>
+                <value>qa1-aero3:3000</value>
+            </list>
+        </property>-->
+    </bean>
+
+    <bean id="aerospikeTestingServlet" class="com.adara.newcache.servlet.AerospikeTestingServlet"
+          init-method="init" destroy-method="destroy">
+    </bean>
+
+    <bean id="memcacheTestingServlet" class="com.adara.newcache.servlet.MemcacheTestingServlet"
+          init-method="init" destroy-method="destroy">
+    </bean>
+</beans>

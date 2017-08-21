@@ -7,7 +7,8 @@
     <groupId>opt.opinmind</groupId>
     <artifactId>aerospiketesting</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Aerospike Testing</name>
+    <name>aerospiketesting</name>
+    <packaging>war</packaging>
 
     <parent>
         <groupId>opinmind</groupId>
@@ -18,24 +19,27 @@
 
     <properties>
         <jdk.version>1.8</jdk.version>
-        <jodatime.version>2.5</jodatime.version>
-        <junit.version>4.11</junit.version>
-
-
-        <bigtable.version>0.9.7.1</bigtable.version>
-
-        <hbase.version>1.2.1</hbase.version>
-
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+        <javax.servlet.version>3.0.1</javax.servlet.version>
+        <spring.framework.version>3.0.5.RELEASE</spring.framework.version>
     </properties>
 
+
+
     <dependencies>
+        <dependency>
+            <groupId>opinmind</groupId>
+            <artifactId>serversidecookie</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <dependency>
             <groupId>com.aerospike</groupId>
             <artifactId>aerospike-client</artifactId>
             <version>4.0.7</version>
         </dependency>
+
 
         <!--this is for Spring-->
         <dependency>
@@ -60,39 +64,179 @@
             <version>${spring.framework.version}</version>
         </dependency>
 
+
+        <!-- this is for Servlet -->
         <dependency>
-            <groupId>opinmind</groupId>
-            <artifactId>serversidecookie</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.framework.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- this is for "JDBC" -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.0.8</version>
+        </dependency>
+
+        <!-- this is for "NETEZZA connection" -->
+        <dependency>
+            <groupId>netezza</groupId>
+            <artifactId>nzjdbc3</artifactId>
+            <version>7.0.2.11P2</version>
+        </dependency>
+
+        <!-- this is for "StrTokenizer" -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
+        </dependency>
+
+        <!-- this is for "log" -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
     </dependencies>
 
+
     <build>
-        <finalName>aerospiketesting</finalName>
+        <finalName>AerospikeTesting</finalName>
         <plugins>
+
+            <!-- download source code in Eclipse, best practice -->
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.adara.newcache.TestingMain</mainClass>
-                        </manifest>
-                    </archive>
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>false</downloadJavadocs>
+                </configuration>
+            </plugin>
+
+            <!-- Set a compiler level -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Assembly Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <!-- get all project dependencies -->
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <!-- MainClass in mainfest make a executable jar -->
+                    <archive>
+                        <manifest>
+                            <mainClass>com.opinmind.ekvsumbf.Processors.BackfillProcessor</mainClass>
+                        </manifest>
+                    </archive>
+
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <id>make-assembly</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warName>aerospiketesting</warName>
+                    <webXml>WEB-INF/web.xml</webXml>
+                    <webResources>
+                        <resource>
+                            <directory>WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>false</filtering>
+                            <includes>
+                                <include>*.xml</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                    <warSourceExcludes>
+                        WEB-INF/lib/servlet-api-*.jar,
+                        bin/**,
+                        dist/**,
+                        target/**,
+                        **/pom.xml,
+                        **/*.java
+                    </warSourceExcludes>
+                    <packagingExcludes>
+                        WEB-INF/lib/junit-*.jar,
+                        WEB-INF/lib/mysql-connector-java-*.jar,
+                        WEB-INF/lib/servlet-api-*.jar
+                    </packagingExcludes>
+                    <!-- <includeDependencies>true</includeDependencies> -->
+                </configuration>
+            </plugin>
+            <!-- <plugin>
+                 <artifactId>maven-assembly-plugin</artifactId>
+                 <version>2.2-beta-1</version>
+                 <configuration>
+                     <descriptors>
+                         <descriptor>assembly.xml</descriptor>
+                     </descriptors>
+                 </configuration>
+             </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <packaging>jar</packaging>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <version>${project.version}</version>
+                            <file>
+                                ${project.build.directory}/${project.groupId}-${project.artifactId}.jar
+                            </file>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
 </project>
