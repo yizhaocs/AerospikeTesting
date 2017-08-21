@@ -3,6 +3,18 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+
+    <bean id="aerospikeTestingServlet" class="com.adara.newcache.servlet.AerospikeTestingServlet"
+          init-method="init" destroy-method="destroy">
+        <property name="aerospikeService" ref="aerospikeService"/>
+    </bean>
+
+    <bean id="memcacheTestingServlet" class="com.adara.newcache.servlet.MemcacheTestingServlet"
+          init-method="init" destroy-method="destroy">
+        <property name="cache" ref="userDataCacheMC"/>
+
+    </bean>
+
     <bean id="aerospikeService" class="com.opinmind.ssc.cache.AerospikeServiceImpl"
           init-method="init" destroy-method="destroy">
         <property name="hostList">
@@ -72,12 +84,5 @@
 
 
 
-    <bean id="aerospikeTestingServlet" class="com.adara.newcache.servlet.AerospikeTestingServlet"
-          init-method="init" destroy-method="destroy">
-        <property name="aerospikeService" ref="aerospikeService"/>
-    </bean>
 
-    <bean id="memcacheTestingServlet" class="com.adara.newcache.servlet.MemcacheTestingServlet"
-          init-method="init" destroy-method="destroy">
-    </bean>
 </beans>

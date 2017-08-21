@@ -1,6 +1,8 @@
 package com.adara.newcache.servlet;
 
+import com.opinmind.ssc.cache.UserDataCache;
 import com.opinmind.ssc.cache.UserDataCacheFactory;
+import com.opinmind.ssc.cache.UserDataCacheImpl;
 import org.apache.log4j.Logger;
 import org.springframework.web.HttpRequestHandler;
 
@@ -17,17 +19,29 @@ import java.io.IOException;
 
 public class MemcacheTestingServlet implements HttpRequestHandler {
     private static final Logger log = Logger.getLogger(MemcacheTestingServlet.class);
-    private UserDataCacheFactory userDataCacheMC;
+    private UserDataCache cache;
 
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String mode = req.getParameter("mode");
-        if(mode.equals("read")){
+        int start =  Integer.valueOf(req.getParameter("start"));
+        int end = Integer.valueOf(req.getParameter("end"));
 
-        }else if(mode.equals("write")){
-
+        try {
+            if (mode.equals("read")) {
+                for (int i = start; i < end; i++) {
+                    cache.getCookieIdMapping(i, String.valueOf(i + 1));
+                }
+            } else if (mode.equals("write")) {
+                for (int i = start; i < end; i++) {
+                    cache.setCookieIdMapping(i, String.valueOf(i + 1), Long.valueOf(i + 2));
+                }
+            }
+        }catch(Exception e){
+            System.out.println("ExceptionUtil.printExceptionInfo:");
+            e.printStackTrace();
+            log.error("[MemcacheTestingServlet.handleRequest]: ", e);
         }
-
 
     }
 
@@ -41,11 +55,7 @@ public class MemcacheTestingServlet implements HttpRequestHandler {
     }
 
 
-    public UserDataCacheFactory getUserDataCacheMC() {
-        return userDataCacheMC;
-    }
-
-    public void setUserDataCacheMC(UserDataCacheFactory userDataCacheMC) {
-        this.userDataCacheMC = userDataCacheMC;
+    public void setCache(UserDataCache cache) {
+        this.cache = cache;
     }
 }
