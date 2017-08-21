@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * mvn clean package install  -Dmaven.test.skip=true -DskipTests=true
  * curl "http://localhost:8080/aero/memcacheTesting?mode=read"
  * curl "http://localhost:8080/aero/memcacheTesting?mode=write"
  *

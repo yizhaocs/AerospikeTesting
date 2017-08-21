@@ -8,14 +8,24 @@
     <artifactId>aerospiketesting</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>aerospiketesting</name>
-    <packaging>war</packaging>
+    <packaging>pom</packaging>
 
-    <parent>
+ <!--   <parent>
         <groupId>opinmind</groupId>
         <artifactId>maven-common</artifactId>
         <relativePath>../MavenCommon/pom.xml</relativePath>
         <version>1.0</version>
     </parent>
+-->
+    <modules>
+        <module>../ServerSideCookie</module>
+        <module>../opinmind-common</module>
+        <module>../Utility</module>
+        <module>../clog</module>
+        <module>../opinmind-webapp</module>
+        <module>../opinmind-db</module>
+        <module>../GoogleCloud</module>
+    </modules>
 
     <properties>
         <jdk.version>1.8</jdk.version>
@@ -109,7 +119,7 @@
 
 
     <build>
-        <finalName>AerospikeTesting</finalName>
+        <finalName>aerospiketesting</finalName>
         <plugins>
 
             <!-- download source code in Eclipse, best practice -->
@@ -166,6 +176,7 @@
 
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>3.1.0</version>
                 <configuration>
                     <warName>aerospiketesting</warName>
                     <webXml>WEB-INF/web.xml</webXml>
@@ -206,18 +217,20 @@
              </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <version>3.0.2</version>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
                         <phase>compile</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>test-jar</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <version>2.5.2</version>
                 <artifactId>maven-install-plugin</artifactId>
                 <executions>
                     <execution>
@@ -226,12 +239,12 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <packaging>jar</packaging>
+                            <packaging>war</packaging>
                             <artifactId>${project.artifactId}</artifactId>
                             <groupId>${project.groupId}</groupId>
                             <version>${project.version}</version>
                             <file>
-                                ${project.build.directory}/${project.groupId}-${project.artifactId}.jar
+                                ${project.build.directory}/${project.artifactId}-jar-with-dependencies.jar
                             </file>
                         </configuration>
                     </execution>
