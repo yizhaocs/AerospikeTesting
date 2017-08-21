@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * scp /Users/yzhao/IdeaProjects/AerospikeTesting/dist/aerospiketesting.war manager:/home/yzhao
+ * scp aerospiketesting.war qa-inweb1:/home/yzhao
  * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=read"
  * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=write"
  *

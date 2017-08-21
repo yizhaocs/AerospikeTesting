@@ -13,6 +13,8 @@ import java.io.IOException;
 
 
 /**
+ * scp /Users/yzhao/IdeaProjects/AerospikeTesting/dist/aerospiketesting.war manager:/home/yzhao
+ * scp aerospiketesting.war qa-inweb1:/home/yzhao
  * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&start=0&end=2000&database=database1&table=set47"
  * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&start=0&end=2000&database=database1&table=set47"
  *
