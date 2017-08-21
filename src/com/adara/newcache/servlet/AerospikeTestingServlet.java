@@ -14,9 +14,13 @@ import java.io.IOException;
 
 /**
  * scp /Users/yzhao/IdeaProjects/AerospikeTesting/dist/aerospiketesting.war manager:/home/yzhao
+ * ssh manager
  * scp aerospiketesting.war qa-inweb1:/home/yzhao
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&start=0&end=2000&database=database1&table=set47"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&start=0&end=2000&database=database1&table=set47"
+ * ssh qa-inweb1
+ * sudo cp aerospiketesting.war /opt/apache-tomcat/webapps/
+ * sudo /sbin/service tomcat restart
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&start=0&end=2000&database=database1&table=set48"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&start=0&end=2000&database=database1&table=set48"
  *
  *
  */

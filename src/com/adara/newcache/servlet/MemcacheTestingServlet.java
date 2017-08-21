@@ -13,7 +13,11 @@ import java.io.IOException;
 
 /**
  * scp /Users/yzhao/IdeaProjects/AerospikeTesting/dist/aerospiketesting.war manager:/home/yzhao
+ * ssh manager
  * scp aerospiketesting.war qa-inweb1:/home/yzhao
+ * ssh qa-inweb1
+ * sudo cp aerospiketesting.war /opt/apache-tomcat/webapps/
+ * sudo /sbin/service tomcat restart
  * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=read"
  * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=write"
  *
