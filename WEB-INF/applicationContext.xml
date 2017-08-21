@@ -22,13 +22,13 @@
             <value>localhost:3000</value>
         </list>
         </property>
-       <property name="hostList">
+     <!--  <property name="hostList">
             <list>
                 <value>qa1-aero1:3000</value>
                 <value>qa1-aero2:3000</value>
                 <value>qa1-aero3:3000</value>
             </list>
-        </property>
+        </property>-->
     </bean>
 
     <bean id="userDataCacheMC" class="com.opinmind.ssc.cache.UserDataCacheFactory"
