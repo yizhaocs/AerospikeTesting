@@ -33,23 +33,34 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
     private static final Logger log = Logger.getLogger(AerospikeTestingServlet.class);
 
     private AerospikeService aerospikeService;
-    static String columnName1 = "id";
-    static String columnName2 = "kv";
+    static String columnName1 = "column1";
+    static String columnName2 = "column2";
+    static String columnName3 = "column3";
 
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        System.out.println("[AerospikeTestingServlet.handleRequest]");
 
         String mode = req.getParameter("mode");
         int start =  Integer.valueOf(req.getParameter("start"));
         int end = Integer.valueOf(req.getParameter("end"));
+        String type = req.getParameter("type");
         String database = req.getParameter("database");
         String table = req.getParameter("table");
         if(mode.equals("read")){
             long startTime = System.nanoTime();
-            for(int i = start; i < end; i++){
-                Key row = new Key(database, table, i);
-                aerospikeService.getAllColumnsForRow(null, row);
+            if(type.equals("string")){
+                for(int i = start; i < end; i++){
+                    Key row = new Key(database, table, String.valueOf(i));
+                    aerospikeService.getAllColumnsForRow(null, row);
+                }
+            }else if(type.equals("integer")){
+                for(int i = start; i < end; i++){
+                    Key row = new Key(database, table, i);
+                    aerospikeService.getAllColumnsForRow(null, row);
+                }
             }
+
             long endTime = System.nanoTime();
 
             long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
@@ -57,11 +68,22 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
             log.info("[AerospikeTestingServlet.handleRequest]: duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
         }else if(mode.equals("write")){
             long startTime = System.nanoTime();
-            for(int i = start; i < end; i++){
-                Key row = new Key(database, table, i);
-                Bin bin1 = new Bin(columnName1, i);
-                Bin bin2 = new Bin(columnName2, i+1);
-                aerospikeService.putColumnForRow(null, row, bin1, bin2);
+            if(type.equals("string")) {
+                for (int i = start; i < end; i++) {
+                    Key row = new Key(database, table, String.valueOf(i));
+                    Bin bin1 = new Bin(columnName1, String.valueOf(i));
+                    Bin bin2 = new Bin(columnName2, String.valueOf(i + 1));
+                    Bin bin3 = new Bin(columnName3, String.valueOf(i + 2));
+                    aerospikeService.putColumnForRow(null, row, bin1, bin2, bin3);
+                }
+            }else if(type.equals("integer")){
+                for (int i = start; i < end; i++) {
+                    Key row = new Key(database, table, i);
+                    Bin bin1 = new Bin(columnName1, i);
+                    Bin bin2 = new Bin(columnName2, i + 1);
+                    Bin bin3 = new Bin(columnName3, i + 2);
+                    aerospikeService.putColumnForRow(null, row, bin1, bin2, bin3);
+                }
             }
             long endTime = System.nanoTime();
 

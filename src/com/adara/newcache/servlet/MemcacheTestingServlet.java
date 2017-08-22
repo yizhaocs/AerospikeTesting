@@ -1,8 +1,6 @@
 package com.adara.newcache.servlet;
 
 import com.opinmind.ssc.cache.UserDataCache;
-import com.opinmind.ssc.cache.UserDataCacheFactory;
-import com.opinmind.ssc.cache.UserDataCacheImpl;
 import org.apache.log4j.Logger;
 import org.springframework.web.HttpRequestHandler;
 
@@ -18,7 +16,7 @@ import java.io.IOException;
  * ssh qa-inweb1
  * sudo cp aerospiketesting.war /opt/apache-tomcat/webapps/
  * sudo /sbin/service tomcat restart
- * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=read&start=0&end=2000"
+ * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=write&start=0&end=2000"
  * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=read&start=0&end=2000"
  *
  *
@@ -30,9 +28,12 @@ public class MemcacheTestingServlet implements HttpRequestHandler {
 
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        System.out.println("[MemcacheTestingServlet.handleRequest]");
+
         String mode = req.getParameter("mode");
         int start =  Integer.valueOf(req.getParameter("start"));
         int end = Integer.valueOf(req.getParameter("end"));
+
 
         try {
             if (mode.equals("read")) {
