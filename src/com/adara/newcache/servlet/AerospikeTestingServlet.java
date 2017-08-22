@@ -53,8 +53,8 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
             long endTime = System.nanoTime();
 
             long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
-            System.out.println("duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
-            log.info("duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
+            System.out.println("[AerospikeTestingServlet.handleRequest]: duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
+            log.info("[AerospikeTestingServlet.handleRequest]: duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
         }else if(mode.equals("write")){
             long startTime = System.nanoTime();
             for(int i = start; i < end; i++){
@@ -66,8 +66,8 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
             long endTime = System.nanoTime();
 
             long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
-            System.out.println("duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
-            log.info("duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
+            System.out.println("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
+            log.info("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
         }
     }
 

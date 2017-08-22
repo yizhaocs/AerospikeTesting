@@ -18,8 +18,9 @@ import java.io.IOException;
  * ssh qa-inweb1
  * sudo cp aerospiketesting.war /opt/apache-tomcat/webapps/
  * sudo /sbin/service tomcat restart
- * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=read"
- * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=write"
+ * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=read&start=0&end=2000"
+ * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=read&start=0&end=2000"
+ *
  *
  */
 
@@ -44,9 +45,9 @@ public class MemcacheTestingServlet implements HttpRequestHandler {
                 }
             }
         }catch(Exception e){
-            System.out.println("ExceptionUtil.printExceptionInfo:");
+            System.out.println("[MemcacheTestingServlet.handleRequest]: ExceptionUtil.printExceptionInfo:");
             e.printStackTrace();
-            log.error("[MemcacheTestingServlet.handleRequest]: ", e);
+            log.error("[MemcacheTestingServlet.handleRequest]: [MemcacheTestingServlet.handleRequest]: ", e);
         }
 
     }

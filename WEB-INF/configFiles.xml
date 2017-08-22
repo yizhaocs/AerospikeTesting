@@ -9,7 +9,7 @@
 		<property name="arguments">
 			<list>
 				<value>file:///opt/opinmind/conf/aerospiketesting/aerospiketesting.log4j.properties</value>
-				<!--<value>file:///Users/yzhao/IdeaProjects/WebappServiceWithServletExample/src/main/resources/webappServiceWithServlet.log4j.properties</value>-->
+
 			</list>
 		</property>
 	</bean>
@@ -30,3 +30,6 @@
 
 
 </beans>
+
+
+		<!--<value>file:///Users/yzhao/IdeaProjects/WebappServiceWithServletExample/src/main/resources/webappServiceWithServlet.log4j.properties</value>-->
