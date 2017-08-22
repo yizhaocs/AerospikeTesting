@@ -34,17 +34,26 @@ public class MemcacheTestingServlet implements HttpRequestHandler {
         int start =  Integer.valueOf(req.getParameter("start"));
         int end = Integer.valueOf(req.getParameter("end"));
 
-
+        int count = 0;
         try {
+            long startTime = System.nanoTime();
             if (mode.equals("read")) {
                 for (int i = start; i < end; i++) {
                     cache.getCookieIdMapping(i, String.valueOf(i + 1));
+                    count++;
                 }
             } else if (mode.equals("write")) {
                 for (int i = start; i < end; i++) {
                     cache.setCookieIdMapping(i, String.valueOf(i + 1), Long.valueOf(i + 2));
+                    count++;
                 }
             }
+
+            long endTime = System.nanoTime();
+
+            long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+            System.out.println("[MemcacheTestingServlet.handleRequest]: duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
+            log.info("[MemcacheTestingServlet.handleRequest]: duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
         }catch(Exception e){
             System.out.println("[MemcacheTestingServlet.handleRequest]: ExceptionUtil.printExceptionInfo:");
             e.printStackTrace();

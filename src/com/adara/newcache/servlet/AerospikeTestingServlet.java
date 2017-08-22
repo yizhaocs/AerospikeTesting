@@ -50,25 +50,28 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
         String type = req.getParameter("type");
         String database = req.getParameter("database");
         String table = req.getParameter("table");
+        int count = 0;
         if(mode.equals("read")){
             long startTime = System.nanoTime();
             if(type.equals("string")){
                 for(int i = start; i < end; i++){
                     Key row = new Key(database, table, String.valueOf(i));
                     aerospikeService.getAllColumnsForRow(null, row);
+                    count++;
                 }
             }else if(type.equals("integer")){
                 for(int i = start; i < end; i++){
                     Key row = new Key(database, table, i);
                     aerospikeService.getAllColumnsForRow(null, row);
+                    count++;
                 }
             }
 
             long endTime = System.nanoTime();
 
             long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
-            System.out.println("[AerospikeTestingServlet.handleRequest]: duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
-            log.info("[AerospikeTestingServlet.handleRequest]: duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
+            System.out.println("[AerospikeTestingServlet.handleRequest]: duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
+            log.info("[AerospikeTestingServlet.handleRequest]: duration for read: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
         }else if(mode.equals("write")){
             long startTime = System.nanoTime();
             if(type.equals("string")) {
@@ -78,6 +81,7 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
                     Bin bin2 = new Bin(columnName2, String.valueOf(i + 1));
                     Bin bin3 = new Bin(columnName3, String.valueOf(i + 2));
                     aerospikeService.putColumnForRow(null, row, bin1, bin2, bin3);
+                    count++;
                 }
             }else if(type.equals("integer")){
                 for (int i = start; i < end; i++) {
@@ -86,13 +90,14 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
                     Bin bin2 = new Bin(columnName2, i + 1);
                     Bin bin3 = new Bin(columnName3, i + 2);
                     aerospikeService.putColumnForRow(null, row, bin1, bin2, bin3);
+                    count++;
                 }
             }
             long endTime = System.nanoTime();
 
             long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
-            System.out.println("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
-            log.info("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(end-start) + " milliseconds");
+            System.out.println("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
+            log.info("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
         }
     }
 
