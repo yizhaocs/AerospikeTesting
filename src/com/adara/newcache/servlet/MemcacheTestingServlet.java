@@ -16,8 +16,8 @@ import java.io.IOException;
  * ssh qa-inweb1
  * sudo cp aerospiketesting.war /opt/apache-tomcat/webapps/
  * sudo /sbin/service tomcat restart
- * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=write&start=0&end=2000"
- * curl "http://localhost:8080/aerospiketesting/memcacheTesting?mode=read&start=0&end=2000"
+ * curl "http://localhost:8080/aerospiketesting/memcachetesting?mode=write&start=0&end=2000"
+ * curl "http://localhost:8080/aerospiketesting/memcachetesting?mode=read&start=0&end=2000"
  *
  *
  */

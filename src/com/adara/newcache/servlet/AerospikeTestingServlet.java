@@ -19,11 +19,11 @@ import java.io.IOException;
  * ssh qa-inweb1
  * sudo cp aerospiketesting.war /opt/apache-tomcat/webapps/
  * sudo /sbin/service tomcat restart
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=string&start=0&end=2000&database=database1&table=set48"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=string&start=0&end=2000&database=database1&table=set48"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=string&start=0&end=2000&database=database1&table=set49"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=string&start=0&end=2000&database=database1&table=set49"
  *
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=integer&start=0&end=2000&database=database1&table=set48"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=integer&start=0&end=2000&database=database1&table=set48"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=integer&start=0&end=2000&database=database1&table=set50"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=integer&start=0&end=2000&database=database1&table=set50"
  *
  *
  */
