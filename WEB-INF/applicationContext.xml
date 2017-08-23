@@ -12,7 +12,11 @@
     <bean id="memcacheTestingServlet" class="com.adara.newcache.servlet.MemcacheTestingServlet"
           init-method="init" destroy-method="destroy">
         <property name="cache" ref="userDataCacheMC"/>
+    </bean>
 
+    <bean id="throughputTestingServlet" class="com.adara.newcache.servlet.ThroughputTestingServlet"
+          init-method="init" destroy-method="destroy">
+        <property name="aerospikeService" ref="aerospikeService"/>
     </bean>
 
     <bean id="aerospikeService" class="com.opinmind.ssc.cache.AerospikeServiceImpl"
