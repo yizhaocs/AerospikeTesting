@@ -36,4 +36,14 @@
         <servlet-name>memcacheTestingServlet</servlet-name>
         <url-pattern>/memcachetesting</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>throughputTestingServlet</servlet-name>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>throughputTestingServlet</servlet-name>
+        <url-pattern>/throughputtesting</url-pattern>
+    </servlet-mapping>
 </web-app>
