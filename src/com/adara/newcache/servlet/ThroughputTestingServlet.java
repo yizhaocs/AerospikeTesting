@@ -18,6 +18,7 @@ import java.io.IOException;
  * ssh qa-inweb1
  * sudo cp aerospiketesting.war /opt/apache-tomcat/webapps/
  * sudo /sbin/service tomcat restart
+ * tail -f /opt/apache-tomcat/logs/catalina.out
  * curl "http://localhost:8080/aerospiketesting/throughputtesting?mode=sync&start=0&end=2000&database=database3&table=test1"
  * curl "http://localhost:8080/aerospiketesting/throughputtesting?mode=async&start=0&end=2000&database=database3&table=test1"
  * curl "http://localhost:8080/aerospiketesting/throughputtesting?mode=async&start=0&end=2000&database=database3&table=test1&allowConcurrentCommandsPerEventloop=40&eventLoopSize=4"
