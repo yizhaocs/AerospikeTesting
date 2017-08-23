@@ -56,13 +56,13 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
             if(type.equals("string")){
                 for(int i = start; i < end; i++){
                     Key row = new Key(database, table, String.valueOf(i));
-                    aerospikeService.getAllColumnsForRow(null, row);
+                    aerospikeService.putRecord(null, row);
                     count++;
                 }
             }else if(type.equals("integer")){
                 for(int i = start; i < end; i++){
                     Key row = new Key(database, table, i);
-                    aerospikeService.getAllColumnsForRow(null, row);
+                    aerospikeService.getRecord(null, row);
                     count++;
                 }
             }
@@ -80,7 +80,7 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
                     Bin bin1 = new Bin(columnName1, String.valueOf(i));
                     Bin bin2 = new Bin(columnName2, String.valueOf(i + 1));
                     Bin bin3 = new Bin(columnName3, String.valueOf(i + 2));
-                    aerospikeService.putColumnForRow(null, row, bin1, bin2, bin3);
+                    aerospikeService.putRecord(null, row, bin1, bin2, bin3);
                     count++;
                 }
             }else if(type.equals("integer")){
@@ -89,7 +89,7 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
                     Bin bin1 = new Bin(columnName1, i);
                     Bin bin2 = new Bin(columnName2, i + 1);
                     Bin bin3 = new Bin(columnName3, i + 2);
-                    aerospikeService.putColumnForRow(null, row, bin1, bin2, bin3);
+                    aerospikeService.getRecord(null, row);
                     count++;
                 }
             }

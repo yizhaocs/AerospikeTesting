@@ -56,7 +56,7 @@ public class TestingMain {
             Bin bin1 = new Bin(columnName1, i);
             Bin bin2 = new Bin(columnName2, "-" + i);
 
-            mAerospikeService.putColumnForRowInAsync(null, mAerospikeService.new WriteHandlerAsync(null, row, bin1, bin2),row, bin1, bin2);
+            mAerospikeService.putRecordAsync(null,row, bin1, bin2);
             i++;
 
           //  mAerospikeService.getAllColumnsForRowInAsync(new AerospikeServiceImpl.ReadHandler(),null,row);
