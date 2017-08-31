@@ -57,7 +57,7 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
             if(type.equals("string")){
                 for(int i = start; i < end; i++){
                     Key row = new Key(database, table, String.valueOf(i));
-                    aerospikeService.putRecord(null, row);
+                    aerospikeService.getRecord(null, row);
                     count++;
                 }
             }else if(type.equals("integer")){
@@ -90,7 +90,7 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
                     Bin bin1 = new Bin(columnName1, i);
                     Bin bin2 = new Bin(columnName2, i + 1);
                     Bin bin3 = new Bin(columnName3, i + 2);
-                    aerospikeService.getRecord(null, row);
+                    aerospikeService.putRecord(null, row, bin1, bin2, bin3);
                     count++;
                 }
             }

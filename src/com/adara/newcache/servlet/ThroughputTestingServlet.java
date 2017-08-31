@@ -41,6 +41,7 @@ public class ThroughputTestingServlet implements HttpRequestHandler {
         String table = req.getParameter("table");
         int allowConcurrentCommandsPerEventloop = Integer.valueOf(req.getParameter("allowConcurrentCommandsPerEventloop"));
         int eventLoopSize = Integer.valueOf(req.getParameter("eventLoopSize"));
+/*
 
         if(allowConcurrentCommandsPerEventloop != 0) {
             aerospikeService.setAllowConcurrentCommandsPerEventloop(allowConcurrentCommandsPerEventloop);
@@ -55,6 +56,7 @@ public class ThroughputTestingServlet implements HttpRequestHandler {
         if(allowConcurrentCommandsPerEventloop != 0 || eventLoopSize != 0){
             aerospikeService.reloadConfig();
         }
+*/
 
         int count = 0;
         long startTime = System.nanoTime();
