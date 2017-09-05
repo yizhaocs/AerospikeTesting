@@ -20,11 +20,11 @@ import java.io.IOException;
  * sudo cp aerospiketesting.war /opt/apache-tomcat/webapps/
  * sudo /sbin/service tomcat restart
  * tail -f /opt/apache-tomcat/logs/catalina.out
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=string&start=0&end=2000&database=database1&table=set49"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=string&start=0&end=2000&database=database1&table=set49"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=string&start=0&end=2000&database=test&table=set49"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=string&start=0&end=2000&database=test&table=set49"
  *
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=integer&start=0&end=2000&database=database1&table=set50"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=integer&start=0&end=2000&database=database1&table=set50"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=integer&start=0&end=2000&database=test&table=set50"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=integer&start=0&end=2000&database=test&table=set50"
  *
  *
  */
