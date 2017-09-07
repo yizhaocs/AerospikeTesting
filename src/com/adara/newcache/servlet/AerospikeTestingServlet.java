@@ -20,11 +20,13 @@ import java.io.IOException;
  * sudo cp aerospiketesting.war /opt/apache-tomcat/webapps/
  * sudo /sbin/service tomcat restart
  * tail -f /opt/apache-tomcat/logs/catalina.out
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=string&start=0&end=2000&database=test&table=set09062017"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=string&start=0&end=2000&database=test&table=set09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=string&start=0&end=2000&database=ao&table=set09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=string&start=0&end=2000&database=ao&table=set09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=delete&type=string&start=0&end=2000&database=ao&table=set09062017"
  *
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=integer&start=0&end=2000&database=test&table=set09062017"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=integer&start=0&end=2000&database=test&table=set09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=integer&start=0&end=2000&database=ao&table=set09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=integer&start=0&end=2000&database=ao&table=set09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=delete&type=integer&start=0&end=2000&database=ao&table=set09062017"
  *
  *
  */
@@ -99,6 +101,30 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
             long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
             System.out.println("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
             log.info("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
+        }else if(mode.equals("delete")){
+            long startTime = System.nanoTime();
+            if(type.equals("string")) {
+                for (int i = start; i < end; i++) {
+                    Key row = new Key(database, table, String.valueOf(i));
+                    aerospikeService.deleteColumn(null, row, columnName1);
+                    aerospikeService.deleteColumn(null, row, columnName2);
+                    aerospikeService.deleteColumn(null, row, columnName3);
+                    count++;
+                }
+            }else if(type.equals("integer")){
+                for (int i = start; i < end; i++) {
+                    Key row = new Key(database, table, i);
+                    aerospikeService.deleteColumn(null, row, columnName1);
+                    aerospikeService.deleteColumn(null, row, columnName2);
+                    aerospikeService.deleteColumn(null, row, columnName3);
+                    count++;
+                }
+            }
+            long endTime = System.nanoTime();
+
+            long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+            System.out.println("[AerospikeTestingServlet.handleRequest]: duration for delete: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
+            log.info("[AerospikeTestingServlet.handleRequest]: duration for delete: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
         }else if(mode.equals("AsyncWrite")){
             long startTime = System.nanoTime();
             if(type.equals("string")) {
