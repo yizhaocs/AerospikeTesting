@@ -101,7 +101,7 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
             long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
             System.out.println("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
             log.info("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
-        }else if(mode.equals("columntonull")){
+        }else if(mode.equals("deletecolumn")){
             long startTime = System.nanoTime();
             if(type.equals("string")) {
                 for (int i = start; i < end; i++) {
@@ -125,7 +125,27 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
             long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
             System.out.println("[AerospikeTestingServlet.handleRequest]: duration for columntonull: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
             log.info("[AerospikeTestingServlet.handleRequest]: duration for columntonull: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
-        }else if(mode.equals("delete")){
+        }else if(mode.equals("deleterow")){
+            long startTime = System.nanoTime();
+            if(type.equals("string")) {
+                for (int i = start; i < end; i++) {
+                    Key row = new Key(database, table, String.valueOf(i));
+                    aerospikeService.deleteRow(null,row);
+                    count++;
+                }
+            }else if(type.equals("integer")){
+                for (int i = start; i < end; i++) {
+                    Key row = new Key(database, table, i);
+                    aerospikeService.deleteRow(null,row);
+                    count++;
+                }
+            }
+            long endTime = System.nanoTime();
+
+            long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+            System.out.println("[AerospikeTestingServlet.handleRequest]: duration for columntonull: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
+            log.info("[AerospikeTestingServlet.handleRequest]: duration for columntonull: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
+        }else if(mode.equals("deletecolumnandrow")){
             long startTime = System.nanoTime();
             if(type.equals("string")) {
                 for (int i = start; i < end; i++) {
