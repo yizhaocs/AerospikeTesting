@@ -2,6 +2,7 @@ package com.adara.newcache.servlet;
 
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
+import com.aerospike.client.policy.WritePolicy;
 import com.opinmind.ssc.cache.AerospikeService;
 import org.apache.log4j.Logger;
 import org.springframework.web.HttpRequestHandler;
@@ -21,6 +22,7 @@ import java.io.IOException;
  * sudo /sbin/service tomcat restart
  * tail -f /opt/apache-tomcat/logs/catalina.out
  * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=string&start=0&end=10&database=ao&table=set09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=writettl&type=string&expiration=2&start=0&end=10&database=ao&table=set09062017"
  * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=string&start=0&end=10&database=ao&table=set09062017"
  * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=deletecolumn&type=string&start=0&end=10&database=ao&table=set09062017"
  * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=deleterow&type=string&start=0&end=10&database=ao&table=set09062017"
@@ -55,6 +57,12 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
         String type = req.getParameter("type");
         String database = req.getParameter("database");
         String table = req.getParameter("table");
+        int expiration = 0;
+        try{
+            expiration = Integer.valueOf(req.getParameter("expiration"));
+        }catch (Exception e){
+
+        }
         int count = 0;
         if(mode.equals("read")){
             long startTime = System.nanoTime();
@@ -91,6 +99,36 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
             }else if(type.equals("integer")){
                 for (int i = start; i < end; i++) {
                     Key row = new Key(database, table, i);
+                    Bin bin1 = new Bin(columnName1, i);
+                    Bin bin2 = new Bin(columnName2, i + 1);
+                    Bin bin3 = new Bin(columnName3, i + 2);
+                    aerospikeService.putRecord(null, row, bin1, bin2, bin3);
+                    count++;
+                }
+            }
+            long endTime = System.nanoTime();
+
+            long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+            System.out.println("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
+            log.info("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
+        }else if(mode.equals("writettl")){
+            long startTime = System.nanoTime();
+            if(type.equals("string")) {
+                for (int i = start; i < end; i++) {
+                    Key row = new Key(database, table, String.valueOf(i));
+                    WritePolicy writePolicy = new WritePolicy();
+                    writePolicy.expiration = expiration;
+                    Bin bin1 = new Bin(columnName1, String.valueOf(i));
+                    Bin bin2 = new Bin(columnName2, String.valueOf(i + 1));
+                    Bin bin3 = new Bin(columnName3, String.valueOf(i + 2));
+                    aerospikeService.putRecord(writePolicy, row, bin1, bin2, bin3);
+                    count++;
+                }
+            }else if(type.equals("integer")){
+                for (int i = start; i < end; i++) {
+                    Key row = new Key(database, table, i);
+                    WritePolicy writePolicy = new WritePolicy();
+                    writePolicy.expiration = expiration;
                     Bin bin1 = new Bin(columnName1, i);
                     Bin bin2 = new Bin(columnName2, i + 1);
                     Bin bin3 = new Bin(columnName3, i + 2);
