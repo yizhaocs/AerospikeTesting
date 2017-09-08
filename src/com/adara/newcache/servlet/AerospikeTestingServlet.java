@@ -91,8 +91,8 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
                 for (int i = start; i < end; i++) {
                     Key row = new Key(database, table, String.valueOf(i));
                     Bin bin1 = new Bin(columnName1, String.valueOf(i));
-                    Bin bin2 = new Bin(columnName2, String.valueOf(i + 1));
-                    Bin bin3 = new Bin(columnName3, String.valueOf(i + 2));
+                    Bin bin2 = new Bin(columnName2, "1234567890");
+                    Bin bin3 = new Bin(columnName3, "1234567890");
                     aerospikeService.putRecord(null, row, bin1, bin2, bin3);
                     count++;
                 }
@@ -100,8 +100,8 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
                 for (int i = start; i < end; i++) {
                     Key row = new Key(database, table, i);
                     Bin bin1 = new Bin(columnName1, i);
-                    Bin bin2 = new Bin(columnName2, i + 1);
-                    Bin bin3 = new Bin(columnName3, i + 2);
+                    Bin bin2 = new Bin(columnName2, 1234567890);
+                    Bin bin3 = new Bin(columnName3, 1234567890);
                     aerospikeService.putRecord(null, row, bin1, bin2, bin3);
                     count++;
                 }
@@ -119,8 +119,8 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
                     WritePolicy writePolicy = new WritePolicy();
                     writePolicy.expiration = expiration;
                     Bin bin1 = new Bin(columnName1, String.valueOf(i));
-                    Bin bin2 = new Bin(columnName2, String.valueOf(i + 1));
-                    Bin bin3 = new Bin(columnName3, String.valueOf(i + 2));
+                    Bin bin2 = new Bin(columnName2, "1234567890");
+                    Bin bin3 = new Bin(columnName3, "1234567890");
                     aerospikeService.putRecord(writePolicy, row, bin1, bin2, bin3);
                     count++;
                 }
@@ -130,8 +130,8 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
                     WritePolicy writePolicy = new WritePolicy();
                     writePolicy.expiration = expiration;
                     Bin bin1 = new Bin(columnName1, i);
-                    Bin bin2 = new Bin(columnName2, i + 1);
-                    Bin bin3 = new Bin(columnName3, i + 2);
+                    Bin bin2 = new Bin(columnName2, 1234567890);
+                    Bin bin3 = new Bin(columnName3, 1234567890);
                     aerospikeService.putRecord(null, row, bin1, bin2, bin3);
                     count++;
                 }

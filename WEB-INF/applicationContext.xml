@@ -28,7 +28,7 @@
             <value>localhost:3000</value>
         </list>
         </property>-->
-        <property name="hostList" value="localhost:40000"/>
+        <property name="hostList" value="qa1-aero1::40000,qa1-aero2::40000,qa1-aero3::40000"/>
      <!--<property name="hostList">-->
             <!--<list>-->
                 <!--<value>qa1-aero1:3000</value>-->
