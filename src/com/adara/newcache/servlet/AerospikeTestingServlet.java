@@ -57,12 +57,14 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
         String type = req.getParameter("type");
         String database = req.getParameter("database");
         String table = req.getParameter("table");
-        int expiration = 0;
+       /* int expiration = 0;
         try{
             expiration = Integer.valueOf(req.getParameter("expiration"));
         }catch (Exception e){
 
-        }
+        }*/
+
+        System.out.println("mode:" + mode + " ,start:" + start + " ,end:" + end + " ,type:" + type + " ,database:" + database + " ,table:" + database);
         int count = 0;
         if(mode.equals("read")){
             long startTime = System.nanoTime();
@@ -111,7 +113,7 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
             long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
             System.out.println("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
             log.info("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
-        }else if(mode.equals("writettl")){
+        /*}else if(mode.equals("writettl")){
             long startTime = System.nanoTime();
             if(type.equals("string")) {
                 for (int i = start; i < end; i++) {
@@ -132,7 +134,7 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
                     Bin bin1 = new Bin(columnName1, i);
                     Bin bin2 = new Bin(columnName2, 1234567890);
                     Bin bin3 = new Bin(columnName3, 1234567890);
-                    aerospikeService.putRecord(null, row, bin1, bin2, bin3);
+                    aerospikeService.putRecord(writePolicy, row, bin1, bin2, bin3);
                     count++;
                 }
             }
@@ -140,7 +142,7 @@ public class AerospikeTestingServlet implements HttpRequestHandler {
 
             long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
             System.out.println("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
-            log.info("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);
+            log.info("[AerospikeTestingServlet.handleRequest]: duration for write: total with " + duration + " milliseconds ,and per query:" + duration/(count) + " milliseconds,  count:" + count);*/
         }else if(mode.equals("deletecolumn")){
             long startTime = System.nanoTime();
             if(type.equals("string")) {
