@@ -21,16 +21,16 @@ import java.io.IOException;
  * sudo cp aerospiketesting.war /opt/apache-tomcat/webapps/
  * sudo /sbin/service tomcat restart
  * tail -f /opt/apache-tomcat/logs/catalina.out
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=string&start=0&end=10&database=ao&table=set09062017"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=writettl&type=string&expiration=2&start=0&end=10&database=ao&table=set09062017"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=string&start=0&end=10&database=ao&table=set09062017"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=deletecolumn&type=string&start=0&end=10&database=ao&table=set09062017"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=deleterow&type=string&start=0&end=10&database=ao&table=set09062017"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=deletecolumnandrow&type=string&start=0&end=10&database=ao&table=set09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=string&start=0&end=10&database=ao&table=table09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=writettl&type=string&expiration=2&start=0&end=10&database=ao&table=table09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=string&start=0&end=10&database=ao&table=table09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=deletecolumn&type=string&start=0&end=10&database=ao&table=table09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=deleterow&type=string&start=0&end=10&database=ao&table=table09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=deletecolumnandrow&type=string&start=0&end=10&database=ao&table=table09062017"
  *
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=integer&start=0&end=10&database=ao&table=set09062017"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=integer&start=0&end=10&database=ao&table=set09062017"
- * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=delete&type=integer&start=0&end=10&database=ao&table=set09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=write&type=integer&start=0&end=10&database=ao&table=table09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=read&type=integer&start=0&end=10&database=ao&table=table09062017"
+ * curl "http://localhost:8080/aerospiketesting/aerospiketesting?mode=delete&type=integer&start=0&end=10&database=ao&table=table09062017"
  *
  *
  */
